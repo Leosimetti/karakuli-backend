@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: DockerFile
+    container_name: backend
+    environment:
+      DB_HOST: "database"
+      HOST_IP: "0.0.0.0"
+    depends_on:
+      - database
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+
+  database:
+    image: mongo
+    container_name: karakuli-mongo
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017"

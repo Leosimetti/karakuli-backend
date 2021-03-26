@@ -1,11 +1,10 @@
-import motor.motor_asyncio
-import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import APIRouter, Request
 from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import MongoDBUserDatabase
 
-DATABASE_URL = "mongodb://localhost:27017"
+from db import db
+
 SECRET = "SECRET"
 
 
@@ -25,12 +24,8 @@ class UserDB(User, models.BaseUserDB):
     pass
 
 
-client = motor.motor_asyncio.AsyncIOMotorClient(
-    DATABASE_URL, uuidRepresentation="standard"
-)
-db = client["database_name"]
 collection = db["users"]
-user_db = MongoDBUserDatabase(UserDB, collection)
+user_db = MongoDBUserDatabase(UserDB, db["users"])
 
 
 def on_after_register(user: UserDB, request: Request):
@@ -49,7 +44,7 @@ jwt_authentication = JWTAuthentication(
     secret=SECRET, lifetime_seconds=3600, tokenUrl="/auth/jwt/login"
 )
 
-app = FastAPI()
+router = APIRouter()
 fastapi_users = FastAPIUsers(
     user_db,
     [jwt_authentication],
@@ -58,27 +53,24 @@ fastapi_users = FastAPIUsers(
     UserUpdate,
     UserDB,
 )
-app.include_router(
+router.include_router(
     fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/jwt", tags=["auth"]
 )
-app.include_router(
+router.include_router(
     fastapi_users.get_register_router(on_after_register), prefix="/auth", tags=["auth"]
 )
-app.include_router(
+router.include_router(
     fastapi_users.get_reset_password_router(
         SECRET, after_forgot_password=on_after_forgot_password
     ),
     prefix="/auth",
     tags=["auth"],
 )
-app.include_router(
+router.include_router(
     fastapi_users.get_verify_router(
         SECRET, after_verification_request=after_verification_request
     ),
     prefix="/auth",
     tags=["auth"],
 )
-app.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])
-
-if __name__ == "__main__":
-    uvicorn.run(app)
+router.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])
