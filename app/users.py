@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import MongoDBUserDatabase
-
+from fastapi_users.authentication import CookieAuthentication
 from db import db
 
 SECRET = "SECRET"
@@ -43,11 +43,15 @@ def after_verification_request(user: UserDB, token: str, request: Request):
 jwt_authentication = JWTAuthentication(
     secret=SECRET, lifetime_seconds=3600, tokenUrl="/auth/jwt/login"
 )
+cookie_authentication = CookieAuthentication(
+    secret=SECRET, lifetime_seconds=3600, cookie_name="karakuli-cookie"
+)
+
 
 router = APIRouter()
 fastapi_users = FastAPIUsers(
     user_db,
-    [jwt_authentication],
+    [jwt_authentication, cookie_authentication],
     User,
     UserCreate,
     UserUpdate,
@@ -56,6 +60,10 @@ fastapi_users = FastAPIUsers(
 router.include_router(
     fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/jwt", tags=["auth"]
 )
+router.include_router(
+    fastapi_users.get_auth_router(cookie_authentication), prefix="/auth/cookie", tags=["auth"]
+)
+
 router.include_router(
     fastapi_users.get_register_router(on_after_register), prefix="/auth", tags=["auth"]
 )
@@ -73,4 +81,6 @@ router.include_router(
     prefix="/auth",
     tags=["auth"],
 )
+
 router.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])
+
