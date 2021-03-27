@@ -6,7 +6,7 @@ WIKIPEDIA = r"https://en.wikipedia.org/wiki/List_of_j%C5%8Dy%C5%8D_kanji"
 
 def words():
     with request.urlopen(WIKIPEDIA) as req:
-        soup = BeautifulSoup(req.read().decode("utf-8"), features="html.parser")
+        soup = BeautifulSoup(req.read().decode("utf-8"), features="html.scrapper")
         table = soup.find_all("table")[1]
         tbody = table.find_all("tbody")[0]
 
