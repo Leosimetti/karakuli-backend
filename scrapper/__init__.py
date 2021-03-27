@@ -14,10 +14,10 @@ def words():
             data = list(map(lambda tag: tag.text, row.find_all("td")))
             if len(data) == 9:
                 word_entry = {
-                    "id": int(data[0]),
-                    "new": data[1],
+                    # "id": int(data[0]),
+                    "writing": data[1],
                     # "old": data[2],
-                    "radical": data[3],
+                    # "radical": data[3],
                     "strokes": data[4],
                     "grade": data[5],
                     # "year_added": data[6],

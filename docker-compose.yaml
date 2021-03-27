@@ -1,24 +1,36 @@
 version: "3.8"
 services:
-  backend:
-    build:
-      context: .
-      dockerfile: DockerFile
-    container_name: backend
-    environment:
-      DB_HOST: "database"
-      HOST_IP: "0.0.0.0"
-    depends_on:
-      - database
-    expose:
-      - "5000"
-    ports:
-      - "5000:5000"
+#  backend:
+#    build:
+#      context: .
+#      dockerfile: DockerFile
+#    container_name: backend
+#    environment:
+#      DB_HOST: "database"
+#      HOST_IP: "0.0.0.0"
+#    depends_on:
+#      - mongo
+#    expose:
+#      - "5000"
+#    ports:
+#      - "5000:5000"
 
-  database:
+  mongo:
     image: mongo
     container_name: karakuli-mongo
     expose:
       - "27017"
     ports:
       - "27017:27017"
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_SERVER: "mongo"
+    depends_on:
+      - mongo
+    expose:
+      - "8081"
+    ports:
+      - "8081:8081"
