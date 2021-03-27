@@ -26,3 +26,8 @@ def words():
                 }
 
                 yield word_entry
+
+
+if __name__ == "__main__":
+    for word in words():
+        print(word)
