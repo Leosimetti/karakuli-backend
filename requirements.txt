@@ -1,3 +1,4 @@
 fastapi
 uvicorn
 fastapi-users[mongodb]
+pydantic
