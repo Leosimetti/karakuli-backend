@@ -3,7 +3,7 @@ from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import MongoDBUserDatabase
 from fastapi_users.authentication import CookieAuthentication
-from db import db
+from .db import db
 
 SECRET = "SECRET"
 

@@ -6,8 +6,8 @@ from pydantic import BaseModel, UUID4, validator
 
 from scrapper import words
 
-from db import db
-from users import UserDB, fastapi_users
+from .db import db
+from .users import UserDB, fastapi_users
 
 
 class BaseWord(BaseModel):
