@@ -1,11 +1,7 @@
 from datetime import datetime, timedelta
+from collections import namedtuple
 
-
-class stage:
-    def __init__(self, interval, name):
-        self.interval = interval
-        self.name = name
-
+stage = namedtuple("stage", ["interval", "name", ])
 
 normal_timings = [
     stage(timedelta(minutes=20), "Initial 1"),
@@ -41,12 +37,14 @@ def correct_answer(current_stage, accelerated):
     if current_stage < (len(accelerated_timings) - 1):
         new_stage += 1
 
-    return new_stage, datetime.now() + accelerated_timings[new_stage].interval if accelerated else normal_timings[new_stage].interval
+    return new_stage, datetime.now() + accelerated_timings[new_stage].interval if accelerated else normal_timings[
+        new_stage].interval
 
 
 def incorrect_answer(current_stage, incorrect_answers_before_correct, accelerated):
     srs_penalty_factor = 2 if (current_stage > 6) else 1
-    new_stage = current_stage - (incorrect_answers_before_correct//2 * srs_penalty_factor)
+    new_stage = current_stage - (incorrect_answers_before_correct // 2 * srs_penalty_factor)
     new_stage = max(new_stage, 0)
 
-    return new_stage, datetime.now() + accelerated_timings[new_stage].interval if accelerated else normal_timings[new_stage].interval
+    return new_stage, datetime.now() + accelerated_timings[new_stage].interval if accelerated else normal_timings[
+        new_stage].interval
