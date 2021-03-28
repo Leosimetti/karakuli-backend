@@ -8,10 +8,9 @@ from scrapper import words
 
 from .db import db
 from .users import UserDB, fastapi_users
+from .models import MongoModel, OID
 
-
-class BaseWord(BaseModel):
-    id: Optional[UUID4] = None
+class BaseWord(MongoModel):
     grade: str
     writing: str
     readings: str
@@ -19,12 +18,12 @@ class BaseWord(BaseModel):
     strokes: int
     user: UUID4
 
-    @validator("id", pre=True, always=True)
-    def default_id(cls, v):
-        return v or uuid.uuid4()
+    # @validator("id", pre=True, always=True)
+    # def default_id(cls, v):
+    #     return v or uuid.uuid4()
 
 
-class CreateWord(BaseModel):
+class CreateWord(MongoModel):
     grade: str
     writing: str
     readings: str
@@ -33,13 +32,13 @@ class CreateWord(BaseModel):
 
 
 router = APIRouter(tags=["kanji"])
-kanji_db = db["kanji"]
+dictionary_db = db["kanji"]
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create(word: CreateWord, user: UserDB = Depends(fastapi_users.current_user(active=True))):
     word_db = BaseWord(**word.dict(), user=user.id)
-    await kanji_db.insert_one(word_db.dict())
+    await dictionary_db.insert_one(word_db.dict())
     return word_db
 
 
@@ -47,7 +46,7 @@ async def create(word: CreateWord, user: UserDB = Depends(fastapi_users.current_
 async def parse_wiki(user: UserDB = Depends(fastapi_users.current_user(active=True))):
     for word in words():
         word_db = BaseWord(**word, user=user.id)
-        await kanji_db.insert_one(word_db.dict())
+        await dictionary_db.insert_one(word_db.dict())
     return "Done"
 
 

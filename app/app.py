@@ -2,12 +2,15 @@ from fastapi import FastAPI
 
 from .db import db
 from .users import router as users_router
-from fastapi.middleware.cors import CORSMiddleware
 from .dictionary import router as words_router
+from .reviews import router as reviews_router
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 app.include_router(users_router)
 app.include_router(words_router, prefix="/words")
+app.include_router(reviews_router, prefix="/reviews")
 
 origins = [
     "http://127.0.0.1",

@@ -28,7 +28,12 @@ collection = db["users"]
 user_db = MongoDBUserDatabase(UserDB, db["users"])
 
 
-def on_after_register(user: UserDB, request: Request):
+async def on_after_register(user: UserDB, request: Request):
+    from .db import db
+    review_db = db["reviews"]
+    user_db = review_db[str(user.id)]
+    await user_db.create_index("word_id", unique=True)
+    await user_db.create_index([("review_date",1)])
     print(f"User {user.id} has registered.")
 
 
@@ -46,7 +51,6 @@ jwt_authentication = JWTAuthentication(
 cookie_authentication = CookieAuthentication(
     secret=SECRET, lifetime_seconds=3600, cookie_name="karakuli-cookie"
 )
-
 
 router = APIRouter()
 fastapi_users = FastAPIUsers(
@@ -83,4 +87,3 @@ router.include_router(
 )
 
 router.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])
-

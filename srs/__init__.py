@@ -37,8 +37,9 @@ def correct_answer(current_stage, accelerated):
     if current_stage < (len(accelerated_timings) - 1):
         new_stage += 1
 
-    return new_stage, datetime.now() + accelerated_timings[new_stage].interval if accelerated else normal_timings[
-        new_stage].interval
+    interval = accelerated_timings[new_stage].interval if accelerated else normal_timings[new_stage].interval
+
+    return new_stage, datetime.now() + interval
 
 
 def incorrect_answer(current_stage, incorrect_answers_before_correct, accelerated):
@@ -46,5 +47,6 @@ def incorrect_answer(current_stage, incorrect_answers_before_correct, accelerate
     new_stage = current_stage - (incorrect_answers_before_correct // 2 * srs_penalty_factor)
     new_stage = max(new_stage, 0)
 
-    return new_stage, datetime.now() + accelerated_timings[new_stage].interval if accelerated else normal_timings[
-        new_stage].interval
+    interval = accelerated_timings[new_stage].interval if accelerated else normal_timings[new_stage].interval
+
+    return new_stage, datetime.now() + interval
