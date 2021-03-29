@@ -21,7 +21,7 @@ async def get_next(user: UserDB = Depends(fastapi_users.current_user(active=True
 
 # TODO make it work
 @router.get("/due-reviews", status_code=status.HTTP_201_CREATED)
-async def get_next(user: UserDB = Depends(fastapi_users.current_user(active=True))):
+async def get_due_reviews(user: UserDB = Depends(fastapi_users.current_user(active=True))):
     user_db = review_db[str(user.id)]
 
     next_review = await user_db.find({max: {"$review_date": datetime.now()}}, sort=[("review_date", 1)])
