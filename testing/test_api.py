@@ -1,56 +1,52 @@
-import asynctest
-import logging
+import pytest
 import inspect
-import sys
+from functools import wraps
 from fastapi.testclient import TestClient
 from app.app import app
-import os
+from testing.conftest import logger
 
-# create logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler(stream=sys.stdout)
-ch.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter('%(name)s: %(message)s')
-ch.setFormatter(formatter)
-
-logger.addHandler(ch)
 client = TestClient(app)
 
 
 def logs(func):
     if inspect.iscoroutinefunction(func):
+        @wraps(func)
         async def wrapper(*args, **kwargs):
-            logger.debug(f"async {func.__name__}")
+            logger.debug(f"Called async {func.__name__}")
             return await func(*args, **kwargs)
     else:
+        @wraps(func)
         def wrapper(*args, **kwargs):
-            logger.debug(f"{func.__name__}")
+            logger.debug(f"Called {func.__name__}")
             return func(*args, **kwargs)
 
     return wrapper
 
 
-class APITestCase(asynctest.TestCase):
+@pytest.mark.usefixtures("class_fixture")
+class TestStuff:
 
     @logs
-    async def tearDown(self) -> None:
-        pass
-
-    @logs
-    async def test_async(self) -> None:
-        import asyncio
-        await asyncio.sleep(1)
+    def test_stuff(self, logs):
         assert True
 
+    @pytest.mark.asyncio
     @logs
-    def test_sync(self):
+    async def test_async_stuff(self, logs):
         assert True
 
-    @logs
-    async def setUp(self) -> None:
-        pass
+
+@pytest.mark.asyncio
+@logs
+async def test_async(logs) -> None:
+    import asyncio
+    await asyncio.sleep(1)
+    assert True
+
+
+@logs
+def test_sync(logs):
+    assert True
 
     # def test_review_database_deletion(self):
     #     logger.debug(self.test_review_database_deletion.__name__)
