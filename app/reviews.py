@@ -5,7 +5,7 @@ from asyncstdlib.builtins import list as alist
 from asyncstdlib.builtins import map as amap
 from .db import db
 from .users import UserDB, fastapi_users
-from .models import Review, ReviewSession, ReviewInBatch
+from .models import Review, ReviewSession, ReviewInBatch, ReviewWord
 from .dictionary import dictionary_db
 from datetime import datetime
 
@@ -22,15 +22,17 @@ async def get_next(user: UserDB = Depends(fastapi_users.current_user(active=True
     return Review.from_mongo(next_review)
 
 
-# TODO See whether limit of 100 is any good
+# TODO See whether limit of 100 is any good.
+# TODO Add an exception if word is not found
 @router.get("", status_code=status.HTTP_201_CREATED)
 async def get_due_reviews(user: UserDB = Depends(fastapi_users.current_user(active=True))):
     user_db = review_db[str(user.id)]
 
     async def create_display(x: Review):
         word = await dictionary_db.find_one({"_id": x.word_id})
+        display_word = ReviewWord(**word, id=x.word_id)
         print(word)
-        return ReviewInBatch(word=word, type=x.type)
+        return ReviewInBatch(word=display_word, type=x.type)
 
     reviews = await user_db.find({"review_date": {"$lt": datetime.now()}}, sort=[("review_date", 1)]).to_list(
         length=100)

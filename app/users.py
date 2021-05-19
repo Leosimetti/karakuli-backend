@@ -54,7 +54,7 @@ jwt_authentication = JWTAuthentication(
     secret=SECRET, lifetime_seconds=3600, tokenUrl="/auth/jwt/login"
 )
 cookie_authentication = CookieAuthentication(
-    secret=SECRET, lifetime_seconds=3600, cookie_name="karakuli-cookie"
+    secret=SECRET, lifetime_seconds=3600, cookie_name="karakuli-cookie", cookie_samesite="None"
 )
 
 router = APIRouter()

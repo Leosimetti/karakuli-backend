@@ -15,10 +15,10 @@ app.include_router(words_router, prefix=f"{prefix}/words")
 app.include_router(reviews_router, prefix=f"{prefix}/reviews")
 
 origins = [
-    "http://127.0.0.1",
-    "http://127.0.0.1:8080",
-    "http://127.0.0.1:5000",
-    "http://127.0.0.1:27017",
+    # "http://127.0.0.1",
+    # "http://127.0.0.1:8080",
+    # "http://127.0.0.1:5000",
+    # "http://127.0.0.1:27017",
 ]
 
 app.add_middleware(

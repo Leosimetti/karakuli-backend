@@ -50,15 +50,6 @@ class MongoModel(BaseModel):
 
         return parsed
 
-class BaseWord(MongoModel):
-    # grade: str
-    kanji: str
-    readings: str
-    meaning: str
-    example: str
-    # strokes: int
-    user: UUID4
-
 
 class CreateWord(MongoModel):
     # grade: str
@@ -67,6 +58,15 @@ class CreateWord(MongoModel):
     meaning: str
     example: str
     # strokes: int
+
+
+class BaseWord(CreateWord):
+    user: UUID4
+
+
+class ReviewWord(CreateWord):
+    id: OID = Field()
+
 
 class Review(MongoModel):
     # _id: UUID4
@@ -86,7 +86,7 @@ class Review(MongoModel):
 
 
 class ReviewInBatch(MongoModel):
-    word: BaseWord
+    word: ReviewWord
     type: str
 
     @validator("type", pre=True, always=True)
@@ -108,6 +108,3 @@ class ReviewSession(MongoModel):
             return v
         else:
             raise ValueError("Illegal type")
-
-
-
