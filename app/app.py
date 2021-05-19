@@ -7,10 +7,12 @@ from .reviews import router as reviews_router
 from fastapi.middleware.cors import CORSMiddleware
 
 
+prefix = "/api"
+
 app = FastAPI()
-app.include_router(users_router)
-app.include_router(words_router, prefix="/words")
-app.include_router(reviews_router, prefix="/reviews")
+app.include_router(users_router, prefix=f"{prefix}")
+app.include_router(words_router, prefix=f"{prefix}/words")
+app.include_router(reviews_router, prefix=f"{prefix}/reviews")
 
 origins = [
     "http://127.0.0.1",

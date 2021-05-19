@@ -8,3 +8,4 @@ pymongo~=3.11.3
 beautifulsoup4~=4.9.3
 pytest~=6.2.2
 pytest-asyncio~=0.14.0
+asyncstdlib

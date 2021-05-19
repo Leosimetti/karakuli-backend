@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
 import srs
+from asyncstdlib.builtins import list as alist
+from asyncstdlib.builtins import map as amap
 from .db import db
 from .users import UserDB, fastapi_users
-from .models import Review, ReviewSession
+from .models import Review, ReviewSession, ReviewInBatch
+from .dictionary import dictionary_db
 from datetime import datetime
 
 router = APIRouter(tags=["reviews"])
@@ -19,15 +22,25 @@ async def get_next(user: UserDB = Depends(fastapi_users.current_user(active=True
     return Review.from_mongo(next_review)
 
 
-# TODO make it work
-@router.get("/due-reviews", status_code=status.HTTP_201_CREATED)
+# TODO See whether limit of 100 is any good
+@router.get("", status_code=status.HTTP_201_CREATED)
 async def get_due_reviews(user: UserDB = Depends(fastapi_users.current_user(active=True))):
     user_db = review_db[str(user.id)]
 
-    next_review = await user_db.find({max: {"$review_date": datetime.now()}}, sort=[("review_date", 1)])
-    print(next_review)
+    async def create_display(x: Review):
+        word = await dictionary_db.find_one({"_id": x.word_id})
+        print(word)
+        return ReviewInBatch(word=word, type=x.type)
 
-    return [Review.from_mongo(x) for x in next_review]
+    reviews = await user_db.find({"review_date": {"$lt": datetime.now()}}, sort=[("review_date", 1)]).to_list(
+        length=100)
+    reviews = list(map(Review.from_mongo, reviews))
+
+    display_reviews = await alist(amap(create_display, reviews))
+
+    # print(next_review)
+
+    return display_reviews
 
 
 @router.post("/submit", status_code=status.HTTP_201_CREATED,

@@ -50,41 +50,64 @@ class MongoModel(BaseModel):
 
         return parsed
 
+class BaseWord(MongoModel):
+    # grade: str
+    kanji: str
+    readings: str
+    meaning: str
+    example: str
+    # strokes: int
+    user: UUID4
+
+
+class CreateWord(MongoModel):
+    # grade: str
+    kanji: str
+    readings: str
+    meaning: str
+    example: str
+    # strokes: int
 
 class Review(MongoModel):
     # _id: UUID4
     word_id: OID = Field()
     srs_stage: int
+    type: str
     total_correct: int
     total_incorrect: int
     review_date: datetime
 
-    # @validator("_id", pre=True, always=True)
-    # def default_id(cls, v):
-    #     return v or uuid.uuid4()
+    @validator("type", pre=True, always=True)
+    def default_type(cls, v: str):
+        if v.__eq__("Чтение") or v.__eq__("Значение"):
+            return v
+        else:
+            raise ValueError("Illegal type")
+
+
+class ReviewInBatch(MongoModel):
+    word: BaseWord
+    type: str
+
+    @validator("type", pre=True, always=True)
+    def default_type(cls, v: str):
+        if v.__eq__("Чтение") or v.__eq__("Значение"):
+            return v
+        else:
+            raise ValueError("Illegal type")
 
 
 class ReviewSession(MongoModel):
     word_id: OID = Field()
+    type: str
     incorrect_answers: int
 
-
-class BaseWord(MongoModel):
-    grade: str
-    writing: str
-    readings: str
-    meaning: str
-    strokes: int
-    user: UUID4
-
-    # @validator("id", pre=True, always=True)
-    # def default_id(cls, v):
-    #     return v or uuid.uuid4()
+    @validator("type", pre=True, always=True)
+    def default_type(cls, v: str):
+        if v.__eq__("Чтение") or v.__eq__("Значение"):
+            return v
+        else:
+            raise ValueError("Illegal type")
 
 
-class CreateWord(MongoModel):
-    grade: str
-    writing: str
-    readings: str
-    meaning: str
-    strokes: int
+

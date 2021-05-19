@@ -53,6 +53,7 @@ async def add_word_to_reviews(review_session: ReviewSession, user: UserDB = Depe
         "word_id": word_id,
         "srs_stage": 0,
         "total_correct": 1,
+        "type": review_session.dict()['type'],
         "total_incorrect": review_session.dict()['incorrect_answers'],
         "review_date": datetime.now()
     }
