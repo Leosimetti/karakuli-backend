@@ -3,6 +3,7 @@ from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import MongoDBUserDatabase
 from fastapi_users.authentication import CookieAuthentication
+from pydantic import EmailStr
 from .db import db
 import os
 
@@ -11,19 +12,21 @@ SECRET = os.getenv("SECRET", "VERY133331235VERYsdad211SECRETPHRASENOONEKNOWS")
 
 
 class User(models.BaseUser):
-    pass
+    username: str
 
 
-class UserCreate(models.BaseUserCreate):
-    pass
+class UserCreate(models.CreateUpdateDictModel):
+    email: EmailStr
+    username: str
+    password: str
 
 
 class UserUpdate(User, models.BaseUserUpdate):
-    pass
+    username: str
 
 
 class UserDB(User, models.BaseUserDB):
-    pass
+    username: str
 
 
 collection = db["users"]

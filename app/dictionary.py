@@ -19,7 +19,7 @@ async def add_a_new_word(word: CreateWord, user: UserDB = Depends(fastapi_users.
 
 
 @router.post("/parse", status_code=status.HTTP_201_CREATED)
-async def parse_wiki(user: UserDB = Depends(fastapi_users.current_user(active=True))):
+async def parse_wiki(user: UserDB = Depends(fastapi_users.current_user(verified=True))):
     for word in words():
         word_db = BaseWord(**word, user=user.id)
         await dictionary_db.insert_one(word_db.dict())
