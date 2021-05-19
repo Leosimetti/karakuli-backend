@@ -4,8 +4,10 @@ from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import MongoDBUserDatabase
 from fastapi_users.authentication import CookieAuthentication
 from .db import db
+import os
 
-SECRET = "SECRET"
+
+SECRET = os.getenv("SECRET", "VERY133331235VERYsdad211SECRETPHRASENOONEKNOWS")
 
 
 class User(models.BaseUser):
