@@ -14,7 +14,7 @@ app.include_router(users_router, prefix=f"{prefix}")
 app.include_router(words_router, prefix=f"{prefix}/words")
 app.include_router(reviews_router, prefix=f"{prefix}/reviews")
 
-origins = [
+origins = ["*"
     # "http://127.0.0.1",
     # "http://127.0.0.1:8080",
     # "http://127.0.0.1:5000",
