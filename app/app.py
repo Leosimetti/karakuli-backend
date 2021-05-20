@@ -4,6 +4,7 @@ from .db import db
 from .users import router as users_router
 from .dictionary import router as words_router
 from .reviews import router as reviews_router
+from .dashboard import router as dashboard_router
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -11,6 +12,7 @@ prefix = "/api"
 
 app = FastAPI()
 app.include_router(users_router, prefix=f"{prefix}")
+app.include_router(dashboard_router, prefix=f"{prefix}")
 app.include_router(words_router, prefix=f"{prefix}/words")
 app.include_router(reviews_router, prefix=f"{prefix}/reviews")
 

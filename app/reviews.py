@@ -30,7 +30,7 @@ async def get_due_reviews(user: UserDB = Depends(fastapi_users.current_user(acti
 
     async def create_display(x: Review):
         word = await dictionary_db.find_one({"_id": x.word_id})
-        display_word = ReviewWord(**word, id=x.word_id)
+        display_word = ReviewWord(**word, word_id=x.word_id)
         print(word)
         return ReviewInBatch(word=display_word, type=x.type)
 

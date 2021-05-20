@@ -1,8 +1,11 @@
 from pydantic import BaseModel, validator, Field, BaseConfig
+from typing import Optional
 from bson import ObjectId
 from bson.errors import InvalidId
 from datetime import datetime
 from pydantic import UUID4
+
+possible_types = ["Чтение", "Значение"]
 
 
 class OID(str):
@@ -65,14 +68,22 @@ class BaseWord(CreateWord):
 
 
 class ReviewWord(CreateWord):
-    id: OID = Field()
+    word_id: OID = Field()
+
+    @classmethod
+    def from_mongo(cls, data: dict):
+        """We must convert _id into "id". """
+        if not data:
+            return data
+        id = data.pop('_id', None)
+        return cls(**dict(data, word_id=id))
 
 
 class Review(MongoModel):
-    # _id: UUID4
-    word_id: OID = Field()
-    srs_stage: int
+    # _id: Optional[UUID4] = Field()
+    word_id: OID
     type: str
+    srs_stage: int
     total_correct: int
     total_incorrect: int
     review_date: datetime
@@ -91,7 +102,7 @@ class ReviewInBatch(MongoModel):
 
     @validator("type", pre=True, always=True)
     def default_type(cls, v: str):
-        if v.__eq__("Чтение") or v.__eq__("Значение"):
+        if v in possible_types:
             return v
         else:
             raise ValueError("Illegal type")
@@ -99,12 +110,4 @@ class ReviewInBatch(MongoModel):
 
 class ReviewSession(MongoModel):
     word_id: OID = Field()
-    type: str
     incorrect_answers: int
-
-    @validator("type", pre=True, always=True)
-    def default_type(cls, v: str):
-        if v.__eq__("Чтение") or v.__eq__("Значение"):
-            return v
-        else:
-            raise ValueError("Illegal type")

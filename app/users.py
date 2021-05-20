@@ -7,7 +7,6 @@ from pydantic import EmailStr
 from .db import db
 import os
 
-
 SECRET = os.getenv("SECRET", "VERY133331235VERYsdad211SECRETPHRASENOONEKNOWS")
 
 
@@ -37,8 +36,8 @@ async def on_after_register(user: UserDB, request: Request):
     from .db import db
     review_db = db["reviews"]
     user_db = review_db[str(user.id)]
-    await user_db.create_index("word_id", unique=True)
-    await user_db.create_index([("review_date",1)])
+    await user_db.create_index("word_id")
+    await user_db.create_index([("review_date", 1)])
     print(f"User {user.id} has registered.")
 
 

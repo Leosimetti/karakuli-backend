@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from datetime import datetime
 from scrapper import words
 
-from .models import Review, ReviewSession, BaseWord, CreateWord
+from .models import Review, ReviewSession, BaseWord, CreateWord, ReviewWord, ReviewInBatch, possible_types
 from .db import db
 from .users import UserDB, fastapi_users
 import pymongo
@@ -14,8 +14,8 @@ dictionary_db = db["dictionary"]
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def add_a_new_word(word: CreateWord, user: UserDB = Depends(fastapi_users.current_user(active=True))):
     word_db = BaseWord(**word.dict(), user=user.id)
-    await dictionary_db.insert_one(word_db.dict())
-    return word_db
+    result = await dictionary_db.insert_one(word_db.dict())
+    return result
 
 
 @router.post("/parse", status_code=status.HTTP_201_CREATED)
@@ -30,7 +30,7 @@ async def parse_wiki(user: UserDB = Depends(fastapi_users.current_user(verified=
 async def list_words_added_for_study(user: UserDB = Depends(fastapi_users.current_user(active=True))):
     results = []
     async for raw_post in dictionary_db.find({"user": user.id}):
-        results.append(BaseWord(**raw_post))
+        results.append(ReviewWord.from_mongo(raw_post))
     return results
 
 
@@ -39,7 +39,8 @@ async def list_words_added_for_study(user: UserDB = Depends(fastapi_users.curren
                  406: {"description": "The requested review already exists"},
                  404: {"description": "The requested word does not exists"}
              })
-async def add_word_to_reviews(review_session: ReviewSession, user: UserDB = Depends(fastapi_users.current_user(active=True))):
+async def add_word_to_reviews(review_session: ReviewSession,
+                              user: UserDB = Depends(fastapi_users.current_user(active=True))):
     from .reviews import review_db
     user_db = review_db[str(user.id)]
     word_id = review_session.dict()['word_id']
@@ -49,20 +50,24 @@ async def add_word_to_reviews(review_session: ReviewSession, user: UserDB = Depe
     if word is None:
         raise HTTPException(status_code=404, detail="The requested word does not exists")
 
-    review = {
-        "word_id": word_id,
-        "srs_stage": 0,
-        "total_correct": 1,
-        "type": review_session.dict()['type'],
-        "total_incorrect": review_session.dict()['incorrect_answers'],
-        "review_date": datetime.now()
-    }
+    # print(await user_db.find_one({"word_id": word_id}))
+    if await user_db.find_one({"word_id": word_id}) is None:
+        added = []
+        for type in possible_types:
+            review = {
+                "word_id": word_id,
+                "srs_stage": 0,
+                "total_correct": 1,
+                "type": type,
+                "total_incorrect": review_session.dict()['incorrect_answers'],
+                "review_date": datetime.now()
+            }
 
-    initial_review = Review(**review)
+            initial_review = Review(**review)
+            added.append(initial_review)
 
-    try:
-        await user_db.insert_one(initial_review.mongo())
-    except pymongo.errors.DuplicateKeyError:
+            await user_db.insert_one(initial_review.dict())
+    else:
         raise HTTPException(status_code=406, detail="The requested review already exists")
 
-    return Review.from_mongo(initial_review.dict())
+    return added
