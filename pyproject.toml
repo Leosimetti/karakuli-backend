@@ -1,7 +1,11 @@
 # pyproject.toml
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-s"
+addopts = [
+    "-s",
+    "--cov-report=html",
+    "--cov=app"
+]
 testpaths = [
     "testing"
 ]

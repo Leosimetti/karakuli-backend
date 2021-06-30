@@ -2,7 +2,7 @@ import pytest
 import inspect
 from functools import wraps
 from fastapi.testclient import TestClient
-from app.app import app
+from app.__init__ import app
 from testing.conftest import logger
 
 client = TestClient(app)
