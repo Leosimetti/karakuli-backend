@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine
 
 import app.settings
 
@@ -26,13 +24,6 @@ db_engine = create_async_engine(
     future=True
 )
 
-db_session_maker = sessionmaker(
-    db_engine,
-    expire_on_commit=False,
-    class_=AsyncSession,
-    future=True
-)
-
 
 @app.on_event("startup")
 async def startup():
@@ -47,8 +38,3 @@ async def startup():
 @app.on_event('shutdown')
 async def shutdown() -> None:
     await db_engine.dispose()
-
-
-async def get_db_session() -> AsyncSession:
-    async with db_session_maker() as session:
-        yield session
