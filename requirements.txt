@@ -8,5 +8,6 @@ pytest~=6.2.2
 pytest-asyncio~=0.14.0
 aiosqlite
 asyncstdlib
-sqlalchemy
-passlib[bcrypt]
+sqlalchemy~=1.4.20
+passlib[bcrypt]~=1.7.4
+python-jose

@@ -1,13 +1,16 @@
 from fastapi import APIRouter, status, Depends
+from fastapi import HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.hashing import hash
-
-from app.schemas.user import UserGeneralResponse, UserCreate
-from app.models import User as UserTable
-
-from app.settings import logger
 from app import get_db_session
+from app.authentication import hash, create_access_token, verify, get_current_user
+from app.settings import logger
+
+from app.schemas.auth import Token
+from app.models import User as UserTable
+from app.schemas.user import UserGeneralResponse, UserCreate
 
 # logger = getLogger(__name__)
 
@@ -56,3 +59,31 @@ def request_verification_token():
 )
 def verify_user(token: str):
     return "VERIFIED"
+
+
+@api.post('/login')
+async def login(request: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db_session)):
+    user = await UserTable.get_by_email(db, request.username)
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Invalid Credentials")
+
+    if not verify(user.password, request.password):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Incorrect password")
+
+    access_token = create_access_token(data={"user_id": user.id})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@api.post(
+    '/refresh-token',
+    response_model=Token,
+    responses={
+        401: {'description': 'Email or password incorrect'},
+    }
+)
+async def refresh_token(user: UserTable = Depends(get_current_user())):
+    access_token = create_access_token(data={"user_id": user.id})
+    return {"access_token": access_token, "token_type": "bearer"}
