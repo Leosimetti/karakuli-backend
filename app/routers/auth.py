@@ -1,6 +1,8 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.hashing import hash
+
 from app.schemas.user import UserGeneralResponse, UserCreate
 from app.models import User as UserTable
 
@@ -25,7 +27,7 @@ async def create_a_user(
     Creates a unverified user in the database
     and sends the verification email.
     """
-    user_db = UserTable(**user.dict())
+    user_db = UserTable(**user.dict(exclude={"password"}), password=hash(user.password))
     session.add(user_db)
     await session.commit()
     await session.refresh(user_db)
