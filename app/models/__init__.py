@@ -22,4 +22,6 @@ class BaseModel:
         return result.scalar()
 
 
+from app.models.review import Review
+from app.models.word import Word
 from app.models.user import User
