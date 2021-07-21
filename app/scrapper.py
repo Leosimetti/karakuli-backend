@@ -15,11 +15,11 @@ def words():
             if len(data) == 9:
                 word_entry = {
                     # "id": int(data[0]),
-                    "writing": data[1],
+                    "kanji": data[1],
                     # "old": data[2],
                     # "radical": data[3],
-                    "strokes": data[4],
-                    "grade": data[5],
+                    # "strokes": data[4],
+                    # "grade": data[5],
                     # "year_added": data[6],
                     "meaning": data[7],
                     "readings": data[8].strip(),

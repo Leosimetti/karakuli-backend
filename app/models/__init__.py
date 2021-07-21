@@ -25,3 +25,5 @@ class BaseModel:
 from app.models.review import Review
 from app.models.word import Word
 from app.models.user import User
+from app.models.study_item import StudyItem
+from app.models.study_list import StudyList

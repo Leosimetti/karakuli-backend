@@ -14,8 +14,10 @@ class User(Base, BaseModel):
     username = Column(String(length=200), unique=True, nullable=False)
     password = Column(String(length=60), nullable=False)
     verified = Column(Boolean, default=False)
+    current_list_id = Column(Integer, default=1)
 
     reviews = relationship("Review", back_populates="user")
+    created_study_lists = relationship("StudyList", back_populates="user")
 
     @staticmethod
     async def get_by_email(session: AsyncSession, email: str):

@@ -8,7 +8,7 @@ class Word(Base, BaseModel):
 
     id = Column(Integer, primary_key=True)
     meaning = Column(String(length=100), nullable=False)
-    reading = Column(String(length=100), unique=True, nullable=False)
+    readings = Column(String(length=100), nullable=False)
     kanji = Column(String(length=60), nullable=False)
-    example = Column(String(length=100), unique=True, nullable=True)
-    meta = Column(JSON, nullable=True)
+    example = Column(String(length=100), nullable=True)
+    meta = Column(JSON, nullable=True)  # Todo maybe change to json

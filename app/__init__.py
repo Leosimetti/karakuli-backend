@@ -8,7 +8,11 @@ app = FastAPI(
     title="Karakuli",
     description="Cool japanese language thing",
     version="0.0.0",
+    # openapi_url="/openapi.json",
+    # root_path="/api/v1",
+    docs_url="/"
 )
+app.router.prefix = "/api/v1"
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,7 +25,8 @@ app.add_middleware(
 # Create engine.
 db_engine = create_async_engine(
     settings.DATABASE_URL,
-    future=True
+    future=True,
+    echo=True  # todo turn off
 )
 
 
@@ -29,9 +34,10 @@ db_engine = create_async_engine(
 async def startup():
     async with db_engine.begin() as conn:
         from app.models import Base
-        async with db_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
+        # Todo fuck go back
+        # async with db_engine.begin() as conn:
+        #     await conn.run_sync(Base.metadata.drop_all)
+        #     await conn.run_sync(Base.metadata.create_all)
     import app.routers
 
 
