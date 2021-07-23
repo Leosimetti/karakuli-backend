@@ -68,4 +68,5 @@ async def list_n_current_user_study_items(
         session: AsyncSession = Depends(get_db_session),
         user: User = Depends(get_current_user()),
 ):
+    # Todo extract code from the function
     return await StudyList.get_n_new_words(session, user.current_list_id, user.id, n)  # tODO take user into account
