@@ -8,10 +8,11 @@ from app.routers.lists import api
 
 
 @api.post(
-    "/words",
+    "{list_id_or_name}/words",
     status_code=status.HTTP_201_CREATED,
 )
 async def add_word_to_study_list(
+        list_id_or_name: str,
         word: WordInList,
         current_user: User = Depends(get_current_user()),
         session: AsyncSession = Depends(get_db_session),
@@ -22,7 +23,11 @@ async def add_word_to_study_list(
             detail='Word not found.'
         )
 
-    study_list = await StudyList.get_by_id(session, word.list_id, "user", "items")
+    if list_id_or_name.isnumeric():
+        study_list = await StudyList.get_by_id(session, list_id_or_name, "user", "items")
+    else:
+        study_list = await StudyList.get_by_name(session, list_id_or_name, "user", "items")
+
     if not study_list:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -35,11 +40,11 @@ async def add_word_to_study_list(
             detail='You cannot add to this list.'
         )
 
-    item = StudyItem(list_id=word.list_id,
+    item = StudyItem(list_id=study_list.id,
                      word_id=word.word_id,
                      note=word.note
                      )
-    sas = await StudyItem.get(session, word.list_id, word.word_id)
+    sas = await StudyItem.get(session, study_list.id, word.word_id)
     if sas:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -58,10 +63,11 @@ async def add_word_to_study_list(
 
 # Todo Check if changing positions can behave in strange ways
 @api.put(
-    "/words",
+    "/{list_id_or_name}/words",
     status_code=status.HTTP_201_CREATED,
 )
 async def update_word_information_in_list(
+        list_id_or_name: str,
         word: WordInList,
         current_user: User = Depends(get_current_user()),
         session: AsyncSession = Depends(get_db_session),
@@ -72,7 +78,11 @@ async def update_word_information_in_list(
             detail='No information to update provided.'
         )
 
-    study_list = await StudyList.get_by_id(session, word.list_id, "user", "items")
+    if list_id_or_name.isnumeric():
+        study_list = await StudyList.get_by_id(session, list_id_or_name, "user", "items")
+    else:
+        study_list = await StudyList.get_by_name(session, list_id_or_name, "user", "items")
+
     if not study_list:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -85,7 +95,7 @@ async def update_word_information_in_list(
             detail='You cannot edit this list.'
         )
 
-    item = await StudyItem.get(session, word.list_id, word.word_id)
+    item = await StudyItem.get(session, study_list.id, word.word_id)
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
