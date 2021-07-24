@@ -1,6 +1,6 @@
 from enum import Enum as _Enum, auto
 
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, and_
 from sqlalchemy import DATETIME, Enum, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -38,9 +38,11 @@ class Review(Base):
     async def get(session: AsyncSession, user_id: int, word_id: int, review_type: ReviewType):
         result = await session.execute(
             select(Review).where(
-                Review.user_id == user_id
-                and Review.word_id == word_id
-                and Review.type == review_type
+                and_(
+                    Review.user_id == user_id,
+                    Review.word_id == word_id,
+                    Review.type == review_type
+                )
             )
         )
 
