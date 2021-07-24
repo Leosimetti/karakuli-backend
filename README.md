@@ -9,6 +9,8 @@ This is the server side of the application, written using FastApi.
 ## Available setting (env variables)
 + **JWT_SECRET_KEY** - secret key used for authentication
 + **DB_HOST** - database url (preferably use async protocols)
++ **HOST_IP** - the app IP
++ **PORT** - the app port
 
 ## How to start:
 Run *main.py*
