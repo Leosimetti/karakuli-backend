@@ -29,6 +29,8 @@ async def create_study_list(
     return study_list
 
 
+# Todo create a Depends() for extracting the id
+# Todo mb create a separate endpoint for the content of the list?
 @api.get(
     "/{list_id_or_name}"
 )

@@ -7,6 +7,7 @@ from app.depends import get_db_session, get_current_user
 from app.routers.lists import api
 
 
+# Todo create a Depends() for extracting the id
 @api.post(
     "{list_id_or_name}/words",
     status_code=status.HTTP_201_CREATED,
@@ -62,6 +63,7 @@ async def add_word_to_study_list(
 
 
 # Todo Check if changing positions can behave in strange ways
+# Todo create a Depends() for extracting the id
 @api.put(
     "/{list_id_or_name}/words",
     status_code=status.HTTP_201_CREATED,

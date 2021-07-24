@@ -11,7 +11,7 @@ class Word(Base, BaseModel):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), index=True)
     meaning = Column(String(length=100), nullable=False)
-    readings = Column(String(length=100), nullable=False)
+    readings = Column(String(length=100), nullable=False)  # Todo find a better way to store reading
     kanji = Column(String(length=60), nullable=False)
     example = Column(String(length=100), nullable=True)
     meta = Column(JSON, nullable=True)
