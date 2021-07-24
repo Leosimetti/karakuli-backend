@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, Boolean, String, Text, and_, except_
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, selectinload
 from sqlalchemy.future import select
 from sqlalchemy.ext.orderinglist import ordering_list
 
@@ -42,11 +42,14 @@ class StudyList(Base, BaseModel):
         return result.scalars().all()
 
     @staticmethod
-    async def get_by_name(session: AsyncSession, name: str):
-        result = await session.execute(
-            select(StudyList).where(
-                StudyList.name == name,
-            )
+    async def get_by_name(session: AsyncSession, name: str, *fields_to_load):
+        query = select(StudyList).where(
+            StudyList.name == name,
         )
 
+        if fields_to_load:
+            for field in fields_to_load:
+                query = query.options(selectinload(field))
+
+        result = await session.execute(query)
         return result.scalar()
