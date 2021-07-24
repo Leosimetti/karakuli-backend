@@ -22,6 +22,7 @@ async def create_a_user(
     Creates a unverified user in the database
     and sends the verification email.
     """
+    # Todo send EMAIL
     user_db = UserTable(**user.dict(exclude={"password"}), password=hash(user.password))
     session.add(user_db)
     await session.commit()
