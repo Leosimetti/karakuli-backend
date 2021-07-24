@@ -38,6 +38,7 @@ async def create_a_user(
     status_code=status.HTTP_200_OK,
 )
 def request_verification_token():
+    # Todo implement
     # if user is already verified - say NO-NO
     # if Not logged in            - do nothing
     # if ok                       - return token
@@ -50,4 +51,5 @@ def request_verification_token():
     status_code=status.HTTP_200_OK,
 )
 def verify_user(token: str):
+    # Todo implement
     return "VERIFIED"
