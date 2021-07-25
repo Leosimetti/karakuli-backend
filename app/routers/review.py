@@ -105,7 +105,7 @@ async def add_word_to_review(
     status_code=status.HTTP_200_OK,
 )
 def list_current_user_reviews(
-        current_user: User = Depends(get_current_user("reviews")),
+        current_user: User = Depends(get_current_user("reviews", "reviews.word")),
 ):
     # Todo maybe somehow add the study list note????
     filter_func = lambda x: x.review_date <= datetime.datetime.now()
