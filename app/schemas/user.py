@@ -3,14 +3,14 @@ from pydantic import BaseModel, EmailStr, constr
 
 class UserBase(BaseModel):
     email: EmailStr
-    username: constr(regex=r'^[0-9a-zA-Z_\-.]{5,64}$')
+    username: str  # constr(regex=r'^[0-9a-zA-Z_\-.]{5,64}$') # Todo add later
 
     def __str__(self):
         return f"{self.username} with {self.email}"
 
 
 class UserCreate(UserBase):
-    password: constr(regex=r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,64}$')
+    password: str  # constr(regex=r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,64}$')  # Todo add later
 
 
 class UserGeneralResponse(UserBase):
