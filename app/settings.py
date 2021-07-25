@@ -3,7 +3,7 @@ import logging
 from uvicorn.config import logger
 
 # DB
-DATABASE_URL = os.getenv("DB_HOST")
+DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL is None:
     logger.warning("Cannot load DATABASE_URL, using sqlite file.")
     DATABASE_URL = "sqlite+aiosqlite:///test.sqlite"
