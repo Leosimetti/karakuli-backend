@@ -77,6 +77,7 @@ async def add_word_to_review(
     for w_id in existing:
         for r_type in ReviewType._member_map_:  # Todo find a better way to access values of enum
             _, new_time = srs.correct_answer(0, False)  # Todo make it look less stupid?
+            new_time = datetime.datetime.timestamp(new_time)
             review = Review(user_id=current_user.id,
                             word_id=w_id,
                             type=r_type,
@@ -108,6 +109,7 @@ def list_current_user_reviews(
         current_user: User = Depends(get_current_user("reviews", "reviews.word")),
 ):
     # Todo maybe somehow add the study list note????
-    filter_func = lambda x: x.review_date <= datetime.datetime.now()
+    now = datetime.datetime.now()
+    filter_func = lambda x: x.review_date <= datetime.datetime.timestamp(now)
     result = list(filter(filter_func, current_user.reviews))
     return result

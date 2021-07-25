@@ -1,7 +1,7 @@
 from enum import Enum as _Enum, auto
 
 from sqlalchemy import Column, Integer, and_
-from sqlalchemy import DATETIME, Enum, ForeignKey
+from sqlalchemy import TIMESTAMP, Enum, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import relationship
@@ -29,7 +29,7 @@ class Review(Base):
     srs_stage = Column(Integer, nullable=False)
     total_correct = Column(Integer, nullable=False)
     total_incorrect = Column(Integer, nullable=False)
-    review_date = Column(DATETIME, index=True)
+    review_date = Column(TIMESTAMP, index=True)
 
     user = relationship("User", back_populates="reviews")
     word = relationship("Word")
