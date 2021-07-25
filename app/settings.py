@@ -7,6 +7,8 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL is None:
     logger.warning("Cannot load DATABASE_URL, using sqlite file.")
     DATABASE_URL = "sqlite+aiosqlite:///test.sqlite"
+else:
+    DATABASE_URL = "postgresql+asyncpg://" + DATABASE_URL.split("://")[1]
 
 # Auth
 ALGORITHM = "HS256"
