@@ -1,7 +1,9 @@
 setup:
+  config:
+    APP_NAME: karakuli-backend
 build:
   docker:
-    web: Dockerfile
+    web: DockerFile
   config:
     NODE_ENV: production
 run:
