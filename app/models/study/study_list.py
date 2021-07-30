@@ -1,11 +1,13 @@
-from sqlalchemy import Column, Integer, Boolean, String, Text, and_, except_
+from sqlalchemy import Column, Integer, Boolean, String, Text, except_
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import relationship, selectinload
 from sqlalchemy.future import select
 from sqlalchemy.ext.orderinglist import ordering_list, count_from_1
 
-from app.models import Base, Lesson, StudyItem, Review, BaseModel
+from app.models.study.study_item import StudyItem
+
+from app.models import Base, Lesson, Review, BaseModel
 
 
 class StudyList(Base, BaseModel):
