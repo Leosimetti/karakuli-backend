@@ -1,9 +1,26 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, Table, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.models import Base
+from app.models.lessons.types.radical import Radical
+from app.models.lessons.reading import Reading
+
+_table_name = 'kanjis'
+
+association_radicals = Table('kanji_to_radicals', Base.metadata,
+                             Column('kanji', ForeignKey(_table_name + ".id"), primary_key=True),
+                             Column('radical', ForeignKey(Radical.id), primary_key=True)
+                             )
+
+association_readings = Table('kanji_to_readings', Base.metadata,
+                             Column('kanji', ForeignKey(_table_name + ".id"), primary_key=True),
+                             Column('reading', ForeignKey(Reading.id), primary_key=True)
+                             )
+
 
 class Kanji(Base):
-    __tablename__ = 'kanjis'
+    __tablename__ = _table_name
 
     id = Column(Integer, primary_key=True)
+    radicals = relationship(Radical, secondary=association_radicals)
+    readings = relationship(Reading, secondary=association_readings)

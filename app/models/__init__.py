@@ -24,6 +24,6 @@ class BaseModel:
 
 from app.models.review import Review
 from app.models.user import User
-from app.models.lessons import Lesson, Example, Reading, GrammarExample, WordReading
+from app.models.lessons import Lesson, Example, Reading
 from app.models.lessons.types import Word, Kanji, Grammar, Radical
 from app.models.study import StudyList, StudyItem
