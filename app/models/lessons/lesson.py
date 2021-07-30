@@ -40,10 +40,10 @@ class Lesson(Base, BaseModel):
     grammar_id = Column(Integer, ForeignKey(Grammar.id), nullable=True)
     word_id = Column(Integer, ForeignKey(Word.id), nullable=True)
 
-    radical = relationship(Radical, backref=backref("lessons", uselist=False))
-    kanji = relationship(Kanji, backref=backref("lessons", uselist=False))
-    grammar = relationship(Grammar, backref=backref("lessons", uselist=False))
-    word = relationship(Word, backref=backref("lessons", uselist=False))
+    radical = relationship(Radical, backref=backref("lesson", uselist=False))
+    kanji = relationship(Kanji, backref=backref("lesson", uselist=False))
+    grammar = relationship(Grammar, backref=backref("lesson", uselist=False))
+    word = relationship(Word, backref=backref("lesson", uselist=False))
 
     __table_args__ = (
         CheckConstraint(_generate_expression("radical_id", "kanji_id", "grammar_id", "word_id")),
