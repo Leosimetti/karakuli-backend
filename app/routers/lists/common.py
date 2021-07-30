@@ -44,9 +44,9 @@ async def get_list_by_id_or_name(
     # Todo figure out how to use class field names instead of str to load fields
 
     if list_id_or_name.isnumeric():
-        result = await StudyList.get_by_id(session, list_id_or_name, "items", "items.word")
+        result = await StudyList.get_by_id(session, list_id_or_name)
     else:
-        result = await StudyList.get_by_name(session, list_id_or_name, "items", "items.word")
+        result = await StudyList.get_by_name(session, list_id_or_name)
 
     if result:
         return result

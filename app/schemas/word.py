@@ -2,8 +2,8 @@ from pydantic import BaseModel, Json
 from typing import Optional
 
 
-class WordInList(BaseModel):
-    word_id: int
+class LessonInList(BaseModel):
+    lesson_id: int
     note: Optional[str]
     position: Optional[int]
 

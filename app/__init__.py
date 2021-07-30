@@ -35,9 +35,8 @@ async def startup():
     async with db_engine.begin() as conn:
         from app.models import Base
         # Todo fuck go back
-        async with db_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
     import app.routers
 
 

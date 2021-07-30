@@ -23,7 +23,11 @@ class BaseModel:
 
 
 from app.models.review import Review
-from app.models.word import Word
 from app.models.user import User
+from app.models.lesson import Lesson
 from app.models.study_item import StudyItem
 from app.models.study_list import StudyList
+from app.models.grammar import Grammar
+from app.models.word import Word
+from app.models.radical import Radical
+from app.models.kanji import Kanji

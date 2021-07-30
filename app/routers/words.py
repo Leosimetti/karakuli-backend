@@ -34,7 +34,7 @@ async def add(
 async def parse(
         session: AsyncSession = Depends(get_db_session),
 ):
-    if await Word.get_by_id(session, 200) is not None:  # Todo remove this retarded if
+    if await Word.get_by_id(session, 3) is not None:  # Todo remove this retarded if
         return "Already parsed"
     else:
         gen = words()

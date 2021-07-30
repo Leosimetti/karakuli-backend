@@ -18,7 +18,7 @@ class User(Base, BaseModel):
 
     reviews = relationship("Review", back_populates="user")
     created_study_lists = relationship("StudyList", back_populates="user")
-    added_words = relationship("Word", back_populates="user")
+    # added_lessons = relationship("Lesson", back_populates="user")
 
     @staticmethod
     async def get_by_email(session: AsyncSession, email: str):
