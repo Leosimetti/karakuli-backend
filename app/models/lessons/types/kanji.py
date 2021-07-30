@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Table, ForeignKey
+from sqlalchemy import Column, Integer, Table, ForeignKey, String, JSON
 from sqlalchemy.orm import relationship
 
 from app.models import Base
@@ -22,5 +22,12 @@ class Kanji(Base):
     __tablename__ = _table_name
 
     id = Column(Integer, primary_key=True)
+
+    character = Column(String(2), nullable=False)
+    strokes = Column(Integer, nullable=False)
+    joyo_level = Column(Integer)
+    jlpt_level = Column(Integer)
+    links = Column(JSON, nullable=True)
+
     radicals = relationship(Radical, secondary=association_radicals)
     readings = relationship(Reading, secondary=association_readings)
