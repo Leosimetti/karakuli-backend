@@ -32,7 +32,7 @@ class Lesson(Base, BaseModel):
     __tablename__ = 'lessons'
 
     id = Column(Integer, primary_key=True)
-    type = Column(Enum(LessonType))
+    type = Column(Enum(LessonType), nullable=False)
 
     radical_id = Column(Integer, ForeignKey("radicals.id"), nullable=True)
     kanji_id = Column(Integer, ForeignKey("kanjis.id"), nullable=True)

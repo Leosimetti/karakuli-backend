@@ -14,10 +14,10 @@ class StudyList(Base, BaseModel):
     __tablename__ = 'studylists'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     approved = Column(Boolean, default=False)
 
-    name = Column(String(100), unique=True)
+    name = Column(String(100), unique=True, nullable=False)
     description = Column(Text())
 
     user = relationship("User", back_populates="created_study_lists")

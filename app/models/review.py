@@ -23,12 +23,12 @@ class Review(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
     lesson_id = Column(Integer, ForeignKey("lessons.id"), primary_key=True)
-    type = Column(Enum(ReviewType), nullable=False, primary_key=True)
+    type = Column(Enum(ReviewType), primary_key=True)
 
     srs_stage = Column(Integer, nullable=False)
     total_correct = Column(Integer, nullable=False)
     total_incorrect = Column(Integer, nullable=False)
-    review_date = Column(TIMESTAMP, index=True)
+    review_date = Column(TIMESTAMP, index=True, nullable=False)
 
     user = relationship("User", back_populates="reviews")
     lesson = relationship("Lesson")
