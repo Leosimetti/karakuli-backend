@@ -12,7 +12,7 @@ from app.models.study.study_item import StudyItem
 from app.models.lessons import Lesson
 from app.models.review import Review
 
-
+# Todo dehardcode table references
 class StudyList(Base, BaseModel):
     __tablename__ = 'studylists'
 

@@ -6,6 +6,8 @@ from sqlalchemy.future import select
 from app.models import Base
 from app.models.lessons import Lesson
 
+
+# Todo dehardcode table references
 class StudyItem(Base):
     __tablename__ = 'studyitems'
 

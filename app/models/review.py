@@ -18,7 +18,7 @@ class ReviewType(_Enum):
     # pronunciation = auto()
 
 
-# Todo make it the same in the front
+# Todo dehardcode table references
 class Review(Base):
     __tablename__ = 'reviews'
 
