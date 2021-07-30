@@ -7,6 +7,7 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import relationship, selectinload, backref
 
 from app.models import Base, BaseModel
+from app.models.lessons.types import Kanji, Radical, Word, Grammar
 
 
 class LessonType(_Enum):
@@ -34,15 +35,15 @@ class Lesson(Base, BaseModel):
     id = Column(Integer, primary_key=True)
     type = Column(Enum(LessonType), nullable=False)
 
-    radical_id = Column(Integer, ForeignKey("radicals.id"), nullable=True)
-    kanji_id = Column(Integer, ForeignKey("kanjis.id"), nullable=True)
-    grammar_id = Column(Integer, ForeignKey("grammars.id"), nullable=True)
-    word_id = Column(Integer, ForeignKey("words.id"), nullable=True)
+    radical_id = Column(Integer, ForeignKey(Radical.id), nullable=True)
+    kanji_id = Column(Integer, ForeignKey(Kanji.id), nullable=True)
+    grammar_id = Column(Integer, ForeignKey(Grammar.id), nullable=True)
+    word_id = Column(Integer, ForeignKey(Word.id), nullable=True)
 
-    radical = relationship("Radical", backref=backref("lessons", uselist=False))
-    kanji = relationship("Kanji", backref=backref("lessons", uselist=False))
-    grammar = relationship("Grammar", backref=backref("lessons", uselist=False))
-    word = relationship("Word", backref=backref("lessons", uselist=False))
+    radical = relationship(Radical, backref=backref("lessons", uselist=False))
+    kanji = relationship(Kanji, backref=backref("lessons", uselist=False))
+    grammar = relationship(Grammar, backref=backref("lessons", uselist=False))
+    word = relationship(Word, backref=backref("lessons", uselist=False))
 
     __table_args__ = (
         CheckConstraint(_generate_expression("radical_id", "kanji_id", "grammar_id", "word_id")),

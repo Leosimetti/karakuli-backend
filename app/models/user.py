@@ -4,6 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.models import BaseModel, Base
+from app.models.study import StudyList
+from app.models.review import Review
 
 
 class User(Base, BaseModel):
@@ -16,8 +18,9 @@ class User(Base, BaseModel):
     verified = Column(Boolean, default=False)
     current_list_id = Column(Integer, default=1)
 
-    reviews = relationship("Review", back_populates="user")
-    created_study_lists = relationship("StudyList", back_populates="user")
+    reviews = relationship(Review, back_populates=StudyList.user)
+    created_study_lists = relationship(StudyList, back_populates=StudyList.user)
+
     # added_lessons = relationship("Lesson", back_populates="user")
 
     @staticmethod

@@ -5,9 +5,12 @@ from sqlalchemy.orm import relationship, selectinload
 from sqlalchemy.future import select
 from sqlalchemy.ext.orderinglist import ordering_list, count_from_1
 
-from app.models.study.study_item import StudyItem
 
-from app.models import Base, Lesson, Review, BaseModel
+from app.models import Base, BaseModel
+
+from app.models.study.study_item import StudyItem
+from app.models.lessons import Lesson
+from app.models.review import Review
 
 
 class StudyList(Base, BaseModel):
@@ -21,7 +24,7 @@ class StudyList(Base, BaseModel):
     description = Column(Text())
 
     user = relationship("User", back_populates="created_study_lists")
-    items = relationship("StudyItem", order_by="StudyItem.position",
+    items = relationship(StudyItem, order_by=StudyItem.position,
                          collection_class=ordering_list('position', ordering_func=count_from_1))
 
     @staticmethod
