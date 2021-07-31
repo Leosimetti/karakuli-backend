@@ -18,7 +18,7 @@ Currently available at https://karakuli-backend.herokuapp.com/docs
 + **PORT** - the app port
 
 ## DB schema (the image is clickable):
-[![image](https://user-images.githubusercontent.com/42554566/127744390-62b20b3a-8a8b-40c8-ba12-171b91ce0c57.png)](https://dbdiagram.io/d/60b9d692b29a09603d17f068)
+[![image](https://user-images.githubusercontent.com/42554566/127751609-b96fb776-3a19-41a0-917d-efcdc0f73fe9.png)](https://dbdiagram.io/d/60b9d692b29a09603d17f068)
 
 
 ## How to start:
