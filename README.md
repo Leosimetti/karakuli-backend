@@ -20,4 +20,8 @@ This is the server side of the application, written using FastApi.
 
 
 ## How to start:
-Run *main.py*
+Install python and run *main.py*
+
+OR 
+
+Install Docker and run *docker-compose up*
