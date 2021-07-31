@@ -1,6 +1,8 @@
 # Karakuli backend
 This is the server side of the application, written using FastApi.
 
+Currently available at https://karakuli-backend.herokuapp.com/docs
+
 ## Features:
 1. **Lesson types** - Lessons are split into Radicals, Kanji, Words, Grammar.
 1. **Study lists** - users are able to combine lessons into lists available to others.
