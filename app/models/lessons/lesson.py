@@ -1,29 +1,19 @@
 from enum import Enum as _Enum
 
-from sqlalchemy import Column, Integer, CheckConstraint
-from sqlalchemy import Enum, ForeignKey
+from sqlalchemy import Column, Integer
+from sqlalchemy import Enum
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import relationship, selectinload, backref
 
 from app.models import Base, BaseModel
 from app.models.lessons.types import Kanji, Radical, Word, Grammar
-from app.models.lessons.types.base_type import BaseType
 
 
 class LessonType(_Enum):
-    radical = "rad"
-    kanji = "kan"
-    word = "wor"
-    grammar = "grm"
-
-
-mapping = {
-    LessonType.radical: Radical,
-    LessonType.kanji: Kanji,
-    LessonType.word: Word,
-    LessonType.grammar: Grammar,
-}
+    radical = Radical
+    kanji = Kanji
+    word = Word
+    grammar = Grammar
 
 
 class Lesson(Base, BaseModel):
@@ -43,7 +33,7 @@ class Lesson(Base, BaseModel):
         tmp = await session.execute(query)
 
         lesson = tmp.scalar()
-        lesson_table = mapping[lesson.type]
+        lesson_table = lesson.type
         result = await lesson_table.get_by_id(session, lesson_id)
 
         return result
