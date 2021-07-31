@@ -30,6 +30,7 @@ class Word(Base):
 
     id = Column(Integer, primary_key=True)
     meaning = Column(String, nullable=False)
+    type = Column(String, nullable=True)
     links = Column(JSON, nullable=True)
 
     readings = relationship(Reading, secondary=association_readings)
