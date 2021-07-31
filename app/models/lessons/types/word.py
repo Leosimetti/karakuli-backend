@@ -5,6 +5,7 @@ from app.models import Base
 from app.models.lessons.types.kanji import Kanji
 from app.models.lessons.example import Example
 from app.models.lessons.reading import Reading
+from app.models.lessons.types.base_type import BaseType
 
 _table_name = 'words'
 
@@ -25,10 +26,10 @@ association_kanjis = Table('word_to_kanjis', Base.metadata,
                            )
 
 
-class Word(Base):
+class Word(Base, BaseType):
     __tablename__ = _table_name
 
-    id = Column(Integer, primary_key=True)
+    # id = Column(Integer, primary_key=True)
     meaning = Column(String, nullable=False)
     type = Column(String, nullable=True)
     links = Column(JSON, nullable=True)

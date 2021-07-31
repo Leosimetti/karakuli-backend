@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from app.models import Base
 from app.models.lessons.example import Example
+from app.models.lessons.types.base_type import BaseType
 
 _table_name = 'grammars'
 
@@ -13,10 +14,10 @@ association_examples = Table('grammar_to_examples', Base.metadata,
                              )
 
 
-class Grammar(Base):
+class Grammar(Base, BaseType):
     __tablename__ = _table_name
 
-    id = Column(Integer, primary_key=True)
+    # id = Column(Integer, primary_key=True)
     description = Column(String, nullable=False)
     links = Column(JSON, nullable=True)
     meta = Column(JSON, nullable=True)

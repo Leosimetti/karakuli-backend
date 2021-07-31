@@ -5,12 +5,12 @@ from sqlalchemy.orm import relationship, selectinload
 from sqlalchemy.future import select
 from sqlalchemy.ext.orderinglist import ordering_list, count_from_1
 
-
 from app.models import Base, BaseModel
 
 from app.models.study.study_item import StudyItem
 from app.models.lessons import Lesson
 from app.models.review import Review
+
 
 # Todo dehardcode table references
 class StudyList(Base, BaseModel):
@@ -31,12 +31,10 @@ class StudyList(Base, BaseModel):
     async def get_n_new_words(session: AsyncSession, list_id: int, user_id: int, n: int):
         # Todo find out why negatives crash
         select_items = select(StudyItem.lesson_id).where(StudyItem.list_id == list_id)
-        # select_items = select(StudyItem.lesson_id)
         select_reviews = select(Review.lesson_id).where(Review.user_id == user_id)
-        sas = except_(select_items, select_reviews)
+        removed_intersection = except_(select_items, select_reviews)
 
-        # Todo make this not retarded
-        tmp = await session.execute(sas)
+        tmp = await session.execute(removed_intersection)
         lesson_ids = tmp.scalars().all()
 
         lessons_appropriate = select(StudyItem.lesson_id, StudyItem.position).where(StudyItem.lesson_id.in_(lesson_ids))
@@ -44,18 +42,8 @@ class StudyList(Base, BaseModel):
 
         tmp = await session.execute(lessons_filtered)
         lesson_ids = tmp.scalars().all()
-        # lesson_ids = list(map(lambda x: x.lesson_id, lessons))
 
         result = [await Lesson.getContent(session, l_id) for l_id in lesson_ids]
-
-        # lol = await Lesson.getContent(session, lesson_ids[0])
-        # print()
-
-        # select_new_words = select(Lesson).where(Lesson.id.in_(lesson_ids))
-        # join_to_position = select_new_words.join(StudyItem.position, StudyItem.lesson_id == Lesson.id)
-        # filter_excess = join_to_position.order_by(StudyItem.position).limit(n)
-        #
-        # result = await session.execute(filter_excess)
 
         return result
 

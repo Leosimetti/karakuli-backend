@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from app.models import Base
 from app.models.lessons.types.radical import Radical
 from app.models.lessons.reading import Reading
+from app.models.lessons.types.base_type import BaseType
 
 _table_name = 'kanjis'
 
@@ -18,10 +19,10 @@ association_readings = Table('kanji_to_readings', Base.metadata,
                              )
 
 
-class Kanji(Base):
+class Kanji(Base, BaseType):
     __tablename__ = _table_name
 
-    id = Column(Integer, primary_key=True)
+    # id = Column(Integer, primary_key=True)
 
     character = Column(String(2), nullable=False)
     strokes = Column(Integer, nullable=False)
