@@ -18,8 +18,8 @@ class User(Base, BaseModel):
     verified = Column(Boolean, default=False)
     current_list_id = Column(Integer, default=1)
 
-    reviews = relationship(Review, back_populates=StudyList.user)
-    created_study_lists = relationship(StudyList, back_populates=StudyList.user)
+    reviews = relationship(Review)
+    created_study_lists = relationship(StudyList)
 
     # added_lessons = relationship("Lesson", back_populates="user")
 
