@@ -35,12 +35,12 @@ class Review(Base):
     lesson = relationship(Lesson)
 
     @staticmethod
-    async def get(session: AsyncSession, user_id: int, word_id: int, review_type: ReviewType):
+    async def get(session: AsyncSession, user_id: int, lesson_id: int, review_type: ReviewType):
         result = await session.execute(
             select(Review).where(
                 and_(
                     Review.user_id == user_id,
-                    Review.word_id == word_id,
+                    Review.lesson_id == lesson_id,
                     Review.type == review_type
                 )
             )
