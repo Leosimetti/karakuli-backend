@@ -1,11 +1,18 @@
 import pytest
 import inspect
 from functools import wraps
-from fastapi.testclient import TestClient
-from app.__init__ import app
+
+from app import app
+
+from httpx import AsyncClient
 from testing.conftest import logger
 
-client = TestClient(app)
+
+@pytest.fixture(scope="function")
+async def ac():
+    client = AsyncClient(app=app, base_url="http://test")
+    yield client
+    await client.aclose()
 
 
 def logs(func):
@@ -32,8 +39,9 @@ class TestStuff:
 
     @pytest.mark.asyncio
     @logs
-    async def test_async_stuff(self, logs):
-        assert True
+    async def test_async_stuff(self, logs, ac):
+        result = await ac.post("/auth/register")
+        assert True, result
 
 
 @pytest.mark.asyncio
