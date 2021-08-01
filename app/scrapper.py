@@ -23,7 +23,7 @@ def kanji():
                     "character": data[1],
                     # "old": data[2],
                     # "radical": data[3],
-                    "strokes": data[4],
+                    "strokes": int(data[4]),
                     "jlpt_level": data[5],
                     # "year_added": data[6],
                     "meaning": data[7],
@@ -48,7 +48,7 @@ def radicals(no_variations=False):
                 continue
 
             radical = {
-                "strokes": data[0],
+                "strokes": int(data[0]),
                 "radical": data[1],
                 "meaning": data[3]
             }
