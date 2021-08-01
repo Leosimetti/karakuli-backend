@@ -1,3 +1,4 @@
+import asyncpg.exceptions
 from sqlalchemy import Column, Integer, ForeignKey, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import declared_attr
@@ -21,11 +22,18 @@ class BaseType:
         if pydantic_model:
             dict = pydantic_model.dict()
 
-        radical = cls(**dict, lesson_id=lesson.id)
-        session.add(radical)
-        await session.commit()
+        # Todo check if this is retarded
+        try:
+            item = cls(**dict, lesson_id=lesson.id)
+            session.add(item)
+            await session.commit()
+        except:
+            await session.rollback()
+            await session.delete(lesson)
+            await session.commit()
+            raise
 
-        return radical
+        return item
 
     @classmethod
     async def get_by_lesson_id(cls, session: AsyncSession, lesson_id: int):
