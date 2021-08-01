@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import create_async_engine
+import aioredis
 
 import app.settings
 
@@ -22,16 +23,20 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-# Create engine.
 db_engine = create_async_engine(
     settings.DATABASE_URL,
     future=True,
     echo=True  # todo turn off
 )
 
+redis = None
+
 
 @app.on_event("startup")
 async def startup():
+    global redis  # Todo check if there is a better way to access the variable
+    redis = await aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+
     async with db_engine.begin() as conn:
         from app.models import Base
         # Todo fuck go back

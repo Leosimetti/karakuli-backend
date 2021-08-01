@@ -39,3 +39,4 @@ typing-extensions==3.10.0.0
 uvicorn==0.13.4
 httpx
 pytest-cov
+aioredis
