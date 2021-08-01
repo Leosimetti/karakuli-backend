@@ -1,4 +1,4 @@
-from fastapi import status, Depends, APIRouter
+from fastapi import status, Depends, APIRouter, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.authentication import hash
@@ -25,6 +25,12 @@ async def create_a_user(
     """
     # Todo send EMAIL
     # Todo add checks for credentials (if already exists)
+
+    tmp = await UserTable.get_by_email(session, user.email)
+    if tmp:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                            detail=f"User already exists")
+
     user_db = UserTable(**user.dict(exclude={"password"}), password=hash(user.password))
     session.add(user_db)
     await session.commit()

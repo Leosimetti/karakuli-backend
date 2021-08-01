@@ -3,7 +3,7 @@ from fastapi import status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.authentication import create_access_token, verify
+from app.authentication import create_access_token, verify, create_refresh_token, get_user_by_refresh_token
 from app.depends import get_db_session, get_current_user
 from app.models import User as UserTable
 from app.schemas.auth import Token
@@ -24,7 +24,13 @@ async def jwt_login(request: OAuth2PasswordRequestForm = Depends(), db: AsyncSes
                             detail=f"Incorrect password")
 
     access_token = create_access_token(data={"user_id": user.id})
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_token = await create_refresh_token(data={"user_id": user.id})
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "refresh_token": refresh_token
+    }
 
 
 # Todo check if this is implemented the right way, as it seems kind of pointless
@@ -37,6 +43,16 @@ async def jwt_login(request: OAuth2PasswordRequestForm = Depends(), db: AsyncSes
         401: {'description': 'Email or password incorrect'},
     }
 )
-async def refresh_jwt_token(user: UserTable = Depends(get_current_user())):
-    access_token = create_access_token(data={"user_id": user.id})
-    return {"access_token": access_token, "token_type": "bearer"}
+async def refresh_jwt_token(
+        refresh_token: str,
+):
+    user_id = await get_user_by_refresh_token(refresh_token)
+
+    access_token = create_access_token(data={"user_id": user_id})
+    refresh_token = await create_refresh_token(data={"user_id": user_id})
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "refresh_token": refresh_token
+    }
