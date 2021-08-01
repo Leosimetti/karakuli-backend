@@ -15,7 +15,7 @@ api = APIRouter(tags=["Kanji"], prefix="/kanji")
 async def parse(
         session: AsyncSession = Depends(get_db_session),
 ):
-    if await Word.get_by_id(session, 3) is not None:  # Todo remove this retarded if
+    if await Kanji.get_by_kanji(session, "亜"):  # Todo remove this retarded if
         return "Already parsed"
     else:
         gen = kanji()

@@ -31,7 +31,7 @@ async def add(
 async def parse(
         session: AsyncSession = Depends(get_db_session),
 ):
-    if await Radical.get_by_id(session, 3) is not None:  # Todo remove this retarded if
+    if await Radical.get_by_radical(session, "⼀"):  # Todo remove this retarded if
         return "Already parsed"
     else:
         gen = radicals()
@@ -39,6 +39,7 @@ async def parse(
             w = next(gen)
             rad = await Radical.create(session, dict=w)
             session.add(rad)
-            await session.commit()
+
+        await session.commit()
 
     return "Done"
