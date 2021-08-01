@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.depends import get_current_user, get_db_session
 from app.models import User, Radical
 from app.schemas.radical import RadicalCreate
+from app.scrapper import radicals
 
 api = APIRouter(tags=["Radicals"], prefix="/radicals")
 
@@ -17,8 +18,27 @@ async def add(
         session: AsyncSession = Depends(get_db_session),
         _: User = Depends(get_current_user())
 ):
-
     # Todo check if already exists, as has to be unique
     radical = await Radical.create(session, rad)
 
     return radical
+
+
+@api.post(
+    "/parse",
+    status_code=status.HTTP_200_OK,
+)
+async def parse(
+        session: AsyncSession = Depends(get_db_session),
+):
+    if await Radical.get_by_id(session, 3) is not None:  # Todo remove this retarded if
+        return "Already parsed"
+    else:
+        gen = radicals()
+        for _ in range(50):
+            w = next(gen)
+            rad = await Radical.create(session, dict=w)
+            session.add(rad)
+            await session.commit()
+
+    return "Done"

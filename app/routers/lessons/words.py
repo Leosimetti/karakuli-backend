@@ -22,22 +22,3 @@ async def add(
     word = await Word.create(session, word)
 
     return word
-
-
-@api.post(
-    "/parse",
-    status_code=status.HTTP_200_OK,
-)
-async def parse(
-        session: AsyncSession = Depends(get_db_session),
-):
-    if await Word.get_by_id(session, 3) is not None:  # Todo remove this retarded if
-        return "Already parsed"
-    else:
-        gen = kanji()
-        for _ in range(50):
-            w = next(gen)
-            session.add(Word(**w, user_id=0))
-            await session.commit()
-
-    return "Done"
