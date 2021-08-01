@@ -10,7 +10,7 @@ class BaseType:
         return Column(Integer, ForeignKey("lessons.id"), primary_key=True)
 
     @classmethod
-    async def create(cls, session: AsyncSession, pydantic_model):
+    async def create(cls, session: AsyncSession, pydantic_model=None, dict=None):
         from app.models.lessons.lesson import Lesson, LessonType
 
         lesson = Lesson(type=LessonType(cls))
@@ -18,7 +18,10 @@ class BaseType:
         await session.commit()
         await session.refresh(lesson)
 
-        radical = cls(**pydantic_model.dict(), lesson_id=lesson.id)
+        if pydantic_model:
+            dict = pydantic_model.dict()
+
+        radical = cls(**dict, lesson_id=lesson.id)
         session.add(radical)
         await session.commit()
 
