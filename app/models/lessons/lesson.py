@@ -33,7 +33,7 @@ class Lesson(Base, BaseModel):
         tmp = await session.execute(query)
 
         lesson = tmp.scalar()
-        lesson_table = lesson.type
+        lesson_table = lesson.type.value
         result = await lesson_table.get_by_lesson_id(session, lesson_id)
 
         return result
