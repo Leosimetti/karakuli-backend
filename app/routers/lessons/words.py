@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.depends import get_current_user, get_db_session
 from app.models import User, Word
 from app.schemas.word import WordCreate
-from app.scrapper import words
+from app.scrapper import kanji
 
 api = APIRouter(tags=["Words"], prefix="/words")
 
@@ -34,7 +34,7 @@ async def parse(
     if await Word.get_by_id(session, 3) is not None:  # Todo remove this retarded if
         return "Already parsed"
     else:
-        gen = words()
+        gen = kanji()
         for _ in range(50):
             w = next(gen)
             session.add(Word(**w, user_id=0))
