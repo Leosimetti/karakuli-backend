@@ -1,12 +1,13 @@
-from fastapi import status, Depends
+from fastapi import status, Depends, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.authentication import hash
 from app.depends import get_db_session
 from app.models import User as UserTable
-from app.routers.auth import api
 from app.schemas.user import UserGeneralResponse, UserCreate
 from app.settings import logger
+
+api = APIRouter(tags=["Common auth"])
 
 
 @api.post(
@@ -23,6 +24,7 @@ async def create_a_user(
     and sends the verification email.
     """
     # Todo send EMAIL
+    # Todo add checks for credentials (if already exists)
     user_db = UserTable(**user.dict(exclude={"password"}), password=hash(user.password))
     session.add(user_db)
     await session.commit()

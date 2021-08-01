@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, APIRouter
 from fastapi import status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,8 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.authentication import create_access_token, verify
 from app.depends import get_db_session, get_current_user
 from app.models import User as UserTable
-from app.routers.auth import api
 from app.schemas.auth import Token
+
+api = APIRouter(tags=["JWT"], prefix="/jwt")
 
 
 @api.post('/login')
@@ -30,7 +31,7 @@ async def jwt_login(request: OAuth2PasswordRequestForm = Depends(), db: AsyncSes
 # When your token expires, this function cannot refresh it. It only works when the token is still valid
 # Todo mb make it so that the token can still be refreshed a minute after the actual expiration? But hoW?
 @api.post(
-    '/refresh-jwt-token',
+    '/refresh',
     response_model=Token,
     responses={
         401: {'description': 'Email or password incorrect'},

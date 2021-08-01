@@ -7,9 +7,8 @@ from jose import jwt
 from app.settings import ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY
 
 from app import app as app_object
-from app.routers.auth import api as auth_api
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=app_object.router.prefix + auth_api.prefix + "/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=app_object.router.prefix + "/auth/jwt/login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 

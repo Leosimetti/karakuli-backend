@@ -1,7 +1,10 @@
 from fastapi import APIRouter
+from app.routers.auth.jwt import api as jwt_api
+from app.routers.auth.cookie import api as cookie_api
+from app.routers.auth.common import api as auth_api
 
 api = APIRouter(tags=["Auth"], prefix="/auth")
 
-import app.routers.auth.common
-import app.routers.auth.jwt
-import app.routers.auth.cookie
+api.include_router(auth_api)
+api.include_router(jwt_api)
+api.include_router(cookie_api)
