@@ -69,7 +69,7 @@ async def add_word_to_review(
     already_added = []
     successfully_added = []
 
-    tmp = await session.execute(select(Word.id).where(Word.id.in_(words)))
+    tmp = await session.execute(select(Word.lesson_id).where(Word.lesson_id.in_(words)))
 
     existing = tmp.scalars().all()
     non_existent = words.difference(set(existing))
