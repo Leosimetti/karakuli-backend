@@ -23,9 +23,10 @@ class Kanji(Base, BaseType):
     __tablename__ = _table_name
 
     character = Column(String(2), nullable=False)
+    meaning = Column(String, nullable=False)
     strokes = Column(Integer, nullable=False)
-    joyo_level = Column(Integer)
-    jlpt_level = Column(Integer)
+    joyo_level = Column(String)
+    jlpt_level = Column(String)
     links = Column(JSON, nullable=True)
 
     radicals = relationship(Radical, secondary=association_radicals)
