@@ -29,12 +29,13 @@ async def add(
     status_code=status.HTTP_200_OK,
 )
 async def parse(
+        no_variations: bool = False,
         session: AsyncSession = Depends(get_db_session),
 ):
     if await Radical.get_by_radical(session, "⼀"):  # Todo remove this retarded if
         return "Already parsed"
     else:
-        gen = radicals()
+        gen = radicals(no_variations=no_variations)
         for _ in range(50):
             w = next(gen)
             rad = await Radical.create(session, dict=w)

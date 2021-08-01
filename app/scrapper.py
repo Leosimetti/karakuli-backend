@@ -2,7 +2,9 @@ from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 
 WIKIPEDIA = r"https://en.wikipedia.org/wiki/List_of_j%C5%8Dy%C5%8D_kanji"
+
 RADICALS = r"https://kanjialive.com/214-traditional-kanji-radicals/"
+ALTERNATIVE_RADICALS = r"https://en.wikipedia.org/wiki/List_of_kanji_radicals_by_frequency"
 
 
 def kanji():
@@ -57,4 +59,3 @@ def radicals(no_variations=False):
 if __name__ == "__main__":
     for word in radicals(no_variations=True):
         print(word)
-

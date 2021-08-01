@@ -11,6 +11,7 @@ class Radical(Base, BaseType):
     radical = Column(String(2), nullable=False, unique=True)  # Todo check why length is not enforced
     meaning = Column(String, nullable=False)
     strokes = Column(Integer, nullable=False)
+    # Todo mb also store variations?
 
     @classmethod
     async def get_by_radical(cls, session: AsyncSession, radical: str):
