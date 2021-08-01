@@ -9,20 +9,18 @@ from app.models.lessons.types.base_type import BaseType
 _table_name = 'kanjis'
 
 association_radicals = Table('kanji_to_radicals', Base.metadata,
-                             Column('kanji', ForeignKey(_table_name + ".id"), primary_key=True),
-                             Column('radical', ForeignKey(Radical.id), primary_key=True)
+                             Column('kanji', ForeignKey(_table_name + ".lesson_id"), primary_key=True),
+                             Column('radical', ForeignKey(Radical.lesson_id), primary_key=True)
                              )
 
 association_readings = Table('kanji_to_readings', Base.metadata,
-                             Column('kanji', ForeignKey(_table_name + ".id"), primary_key=True),
+                             Column('kanji', ForeignKey(_table_name + ".lesson_id"), primary_key=True),
                              Column('reading', ForeignKey(Reading.id), primary_key=True)
                              )
 
 
 class Kanji(Base, BaseType):
     __tablename__ = _table_name
-
-    # id = Column(Integer, primary_key=True)
 
     character = Column(String(2), nullable=False)
     strokes = Column(Integer, nullable=False)

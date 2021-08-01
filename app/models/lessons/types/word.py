@@ -10,26 +10,25 @@ from app.models.lessons.types.base_type import BaseType
 _table_name = 'words'
 
 association_readings = Table('word_to_readings', Base.metadata,
-                             Column('word', ForeignKey(_table_name + ".id"), primary_key=True),
+                             Column('word', ForeignKey(_table_name + ".lesson_id"), primary_key=True),
                              Column('reading', ForeignKey(Reading.id), primary_key=True),
                              Column('position', Integer, primary_key=True)
                              )
 
 association_examples = Table('word_to_examples', Base.metadata,
-                             Column('word', ForeignKey(_table_name + ".id"), primary_key=True),
+                             Column('word', ForeignKey(_table_name + ".lesson_id"), primary_key=True),
                              Column('example', ForeignKey(Example.id), primary_key=True)
                              )
 
 association_kanjis = Table('word_to_kanjis', Base.metadata,
-                           Column('word', ForeignKey(_table_name + ".id"), primary_key=True),
-                           Column('kanji', ForeignKey(Kanji.id), primary_key=True)
+                           Column('word', ForeignKey(_table_name + ".lesson_id"), primary_key=True),
+                           Column('kanji', ForeignKey(Kanji.lesson_id), primary_key=True)
                            )
 
 
 class Word(Base, BaseType):
     __tablename__ = _table_name
 
-    # id = Column(Integer, primary_key=True)
     meaning = Column(String, nullable=False)
     type = Column(String, nullable=True)
     links = Column(JSON, nullable=True)

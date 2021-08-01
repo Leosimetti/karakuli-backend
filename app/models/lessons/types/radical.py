@@ -7,8 +7,6 @@ from app.models.lessons.types.base_type import BaseType
 class Radical(Base, BaseType):
     __tablename__ = 'radicals'
 
-    # id = Column(Integer, primary_key=True)
-
-    radical = Column(String(2), nullable=False, unique=True)
+    radical = Column(String(2), nullable=False, unique=True) # Todo check why length is not enforced
     meaning = Column(String, nullable=False)
     strokes = Column(Integer, nullable=False)
