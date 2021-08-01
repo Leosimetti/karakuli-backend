@@ -28,7 +28,7 @@ class BaseType:
         return radical
 
     @classmethod
-    async def get_by_id(cls, session: AsyncSession, lesson_id: int):
+    async def get_by_lesson_id(cls, session: AsyncSession, lesson_id: int):
         query = select(cls).where(cls.lesson_id == int(lesson_id))
         result = await session.execute(query)
 
