@@ -9,5 +9,6 @@ class Radical(Base, BaseType):
 
     # id = Column(Integer, primary_key=True)
 
-    strokes = Column(Integer, nullable=False)
+    radical = Column(String(2), nullable=False, unique=True)
     meaning = Column(String, nullable=False)
+    strokes = Column(Integer, nullable=False)
