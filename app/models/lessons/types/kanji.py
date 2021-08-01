@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, Table, ForeignKey, String, JSON
+from sqlalchemy import Column, Integer, Table, ForeignKey, String, JSON, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import relationship
 
 from app.models import Base
@@ -31,3 +32,10 @@ class Kanji(Base, BaseType):
 
     radicals = relationship(Radical, secondary=association_radicals)
     readings = relationship(Reading, secondary=association_readings)
+
+    @classmethod
+    async def get_by_kanji(cls, session: AsyncSession, kanji: str):
+        query = select(Kanji).where(Kanji.character == kanji)
+        result = await session.execute(query)
+
+        return result.scalar()
