@@ -40,3 +40,6 @@ uvicorn==0.13.4
 httpx
 pytest-cov
 aioredis
+pytest-asyncio
+pytest-xdist
+python-dotenv

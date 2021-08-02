@@ -2,9 +2,12 @@
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = [
+#    "-n=3", # Todo use this to speed up tests
     "-s",
     "--cov-report=html",
-    "--cov=app"
+    "--cov=app",
+    "--cov-config=.coveragerc",
+    "--color=yes",
 ]
 testpaths = [
     "testing"
