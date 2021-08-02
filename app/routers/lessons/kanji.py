@@ -21,8 +21,6 @@ async def parse(
         gen = kanji()
         for _ in range(50):
             w = next(gen)
-            word = await Kanji.create(session, dict=w)
-            session.add(word)
-            await session.commit()
+            await Kanji.create(session, dict=w)
 
     return "Done"

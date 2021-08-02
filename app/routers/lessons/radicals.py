@@ -38,9 +38,6 @@ async def parse(
         gen = radicals(no_variations=no_variations)
         for _ in range(50):
             w = next(gen)
-            rad = await Radical.create(session, dict=w)
-            session.add(rad)
-
-        await session.commit()
+            await Radical.create(session, dict=w)
 
     return "Done"
