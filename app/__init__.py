@@ -15,6 +15,8 @@ app = FastAPI(
 )
 app.router.prefix = "/api/v1"
 
+# Todo stop the app if db is unreachable ???
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ORIGINS,
@@ -25,8 +27,7 @@ app.add_middleware(
 
 db_engine = create_async_engine(
     settings.DATABASE_URL,
-    future=True,
-    echo=True  # todo turn off
+    future=True
 )
 
 redis = None
