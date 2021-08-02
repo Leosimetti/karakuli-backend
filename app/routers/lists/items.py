@@ -14,9 +14,10 @@ from app.routers.lists import api
          )
 async def get_list_items(
         list_id_or_name: str,
-        current_user: User = Depends(get_current_user()),
+        _: User = Depends(get_current_user()),
         session: AsyncSession = Depends(get_db_session),
 ):
+    # Todo compress this duplicate code into a separate function or depends or class method
     if list_id_or_name.isnumeric():
         study_list = await StudyList.get_by_id(session, list_id_or_name, "user", "items")
     else:
@@ -27,6 +28,11 @@ async def get_list_items(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='List not found.'
         )
+
+    lesson_ids = list(map(lambda item: item.lesson_id, study_list.items))
+    lessons = [await Lesson.getContent(session, l_id) for l_id in lesson_ids]
+
+    return lessons
 
 
 @api.post(
@@ -45,6 +51,7 @@ async def add_item_to_study_list(
             detail='Lesson not found.'
         )
 
+    # Todo compress this duplicate code into a separate function or depends or class method
     if list_id_or_name.isnumeric():
         study_list = await StudyList.get_by_id(session, list_id_or_name, "user", "items")
     else:
@@ -101,6 +108,7 @@ async def update_item_information_in_list(
             detail='No information to update provided.'
         )
 
+    # Todo compress this duplicate code into a separate function or depends or class method
     if list_id_or_name.isnumeric():
         study_list = await StudyList.get_by_id(session, list_id_or_name, "user", "items")
     else:
@@ -129,7 +137,7 @@ async def update_item_information_in_list(
 
     if lesson.position is not None:
         study_list.items.remove(item)
-        study_list.items.insert(lesson.position-1, item)
+        study_list.items.insert(lesson.position - 1, item)
 
     await session.commit()
     await session.refresh(item)
