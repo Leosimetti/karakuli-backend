@@ -54,8 +54,3 @@ def radicals(no_variations=False):
             }
 
             yield radical
-
-
-if __name__ == "__main__":
-    for word in radicals(no_variations=True):
-        print(word)

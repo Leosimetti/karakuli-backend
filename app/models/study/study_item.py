@@ -11,14 +11,13 @@ from app.models.lessons import Lesson
 class StudyItem(Base):
     __tablename__ = 'studyitems'
 
-    # id = Column(Integer, primary_key=True)
     list_id = Column(Integer, ForeignKey("studylists.id"), primary_key=True)
     lesson_id = Column(Integer, ForeignKey(Lesson.id), primary_key=True)
 
     position = Column(Integer, nullable=False)
     note = Column(Text())
 
-    lesson = relationship(Lesson)
+    lesson = relationship(Lesson)  # Todo check if this is useless
 
     @staticmethod
     async def get(session: AsyncSession, list_id: int, lesson_id: int):
