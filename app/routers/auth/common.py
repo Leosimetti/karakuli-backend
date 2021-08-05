@@ -2,7 +2,7 @@ from fastapi import status, Depends, APIRouter, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.authentication import hash
-from app.depends import get_db_session
+from app.depends import get_db_session, get_current_user
 from app.models import User as UserTable
 from app.schemas.user import UserGeneralResponse, UserCreate
 from app.settings import logger
@@ -39,6 +39,14 @@ async def create_a_user(
     logger.info(f"User {user} registered")
 
     return user_db
+
+
+# Todo add proper return model to hide some fields
+@api.get("/me")
+async def get_current_user(
+        user=Depends(get_current_user())
+):
+    return user
 
 
 @api.post(
