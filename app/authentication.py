@@ -1,3 +1,4 @@
+import time
 from datetime import datetime, timedelta
 
 from fastapi import HTTPException
@@ -22,14 +23,14 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-async def create_refresh_token(data: dict, redis):
-    to_encode = data.copy()
+async def create_refresh_token(data, redis):
+    time.sleep(1)  # Todo RETARD!!!!!!!! find a better way to ensure generation of different tokens
+    payload = data.copy()  # Todo mb fix that refresh token can be used to log in
     expire = datetime.utcnow() + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    payload.update({"exp": expire})
+    encoded_jwt = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-    await redis.set(data["user_id"], encoded_jwt)
-
+    await redis.set(payload["user_id"], encoded_jwt)
     return encoded_jwt
 
 
@@ -48,8 +49,11 @@ async def get_user_by_refresh_token(token: str, redis):
         user = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
         raise bad_token_exception
+    try:
+        user_id = user["user_id"]
+    except KeyError:
+        raise bad_token_exception
 
-    user_id = user["user_id"]
     redis_token = await redis.get(user_id)
     if redis_token == token:
         return user_id

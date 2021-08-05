@@ -22,6 +22,7 @@ async def create_tokens(user_id, redis):
     }
 
 
+# Todo check if refresh can be used to login
 @api.post('/login',
           responses={
               404: {"detail": "Invalid Credentials/ Incorrect password"},
