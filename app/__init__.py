@@ -30,19 +30,22 @@ db_engine = create_async_engine(
     future=True
 )
 
-redis = None
+# TODO PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
+import os
+
+if os.getenv("IS_DEV"):
+    @app.router.post("/drop")
+    async def drop_and_recreate_db():
+        async with db_engine.begin() as conn:
+            from app.models import Base
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
+
+        return 'DONE'
 
 
 @app.on_event("startup")
 async def startup():
-    global redis  # Todo check if there is a better way to access the variable
-    redis = await aioredis.from_url(settings.REDIS_URL, decode_responses=True)
-
-    async with db_engine.begin() as conn:
-        from app.models import Base
-        # Todo fuck go back
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
     import app.routers
 
 

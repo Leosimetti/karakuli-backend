@@ -8,7 +8,7 @@ from starlette import status
 
 from app.settings import ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY, REFRESH_TOKEN_EXPIRE_MINUTES
 
-from app import app as app_object, redis
+from app import app as app_object
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=app_object.router.prefix + "/auth/jwt/login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -22,7 +22,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-async def create_refresh_token(data: dict):
+async def create_refresh_token(data: dict, redis):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
@@ -37,7 +37,7 @@ def hash(pwd: str):
     return pwd_context.hash(pwd)
 
 
-async def get_user_by_refresh_token(token: str):
+async def get_user_by_refresh_token(token: str, redis):
     try:
         user = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:
