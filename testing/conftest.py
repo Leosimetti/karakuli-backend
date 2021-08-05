@@ -1,40 +1,38 @@
 import pytest
-import logging
-import sys
 
-# create logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler(stream=sys.stdout)
-ch.setLevel(logging.DEBUG)
+import app
+from app.routers.auth import api as auth_api
+from app.routers.lists import api as lists_api
+from app.routers.lessons import api as lessons_api
+from httpx import AsyncClient
 
-formatter = logging.Formatter('%(name)s: %(message)s')
-ch.setFormatter(formatter)
+app_object = app.app
+pytestmark = pytest.mark.asyncio
 
-logger.addHandler(ch)
+BASE_PATH = app_object.router.prefix
+AUTH_PATH = BASE_PATH + auth_api.prefix
+LISTS_PATH = BASE_PATH + lists_api.prefix
+LESSONS_PATH = BASE_PATH + lessons_api.prefix
 
 
-@pytest.fixture(scope="session", autouse=True)
-def session_fixture(request):
-    logger.debug(f"Called {request.fixturename} before tests")
+# Todo Find out what causes "RuntimeError: Event loop is closed"
 
-    def finish():
-        logger.debug(f"Called {request.fixturename} after tests")
+@pytest.fixture
+async def ac():
+    from app import db_engine
+    async with db_engine.begin() as conn:
+        from app.models import Base
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
 
-    request.addfinalizer(finish)
+    async with AsyncClient(app=app_object, base_url="http://test") as client:
+        await app.startup()
+        yield client
+    await app.shutdown()
 
 
 @pytest.fixture
-def logs(request):
-    test_class = request.cls.__name__ + "." if request.cls else ""
-    logger.debug(f"Called {request.fixturename} before {test_class}{request.function.__name__}")
-    yield
-    logger.debug(f"Called {request.fixturename} after {test_class}{request.function.__name__}")
-
-
-@pytest.fixture(scope="class")
-def class_fixture(request):
-    test_class = request.cls.__name__ + "." if request.cls else ""
-    logger.debug(f"Called {request.fixturename} before {test_class}")
-    yield
-    logger.debug(f"Called {request.fixturename} after {test_class}")
+async def fill_db():
+    async with AsyncClient(app=app_object, base_url="http://test") as ac:
+        await ac.post(LESSONS_PATH + "/radicals" + "/parse")
+        await ac.post(LESSONS_PATH + "/kanji" + "/parse")
