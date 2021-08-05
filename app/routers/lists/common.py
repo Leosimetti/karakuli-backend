@@ -8,12 +8,16 @@ from app.routers.lists import api
 
 @api.post(
     "",
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        409: {"detail": "This name is already taken."},
+    }
 )
 async def create_study_list(
         name: str = Query(..., regex=r"\D"),
         session: AsyncSession = Depends(get_db_session),
         current_user: User = Depends(get_current_user()),
+
 ):
     if await StudyList.get_by_name(session, name):
         raise HTTPException(
