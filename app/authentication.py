@@ -38,19 +38,23 @@ def hash(pwd: str):
 
 
 async def get_user_by_refresh_token(token: str, redis):
+    bad_token_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail='Bad token.',
+        headers={'WWW-Authenticate': 'Bearer'}
+    )
+
     try:
         user = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Bad token.',
-            headers={'WWW-Authenticate': 'Bearer'}
-        )
+        raise bad_token_exception
 
     user_id = user["user_id"]
     redis_token = await redis.get(user_id)
     if redis_token == token:
         return user_id
+    else:
+        raise bad_token_exception
 
 
 def verify(hashed_pwd, plain_pwd):
