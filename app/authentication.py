@@ -40,12 +40,6 @@ def hash(pwd: str):
 async def get_user_by_refresh_token(token: str, redis):
     try:
         user = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='The token has expired.',
-            headers={'WWW-Authenticate': 'Bearer'}
-        )
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
