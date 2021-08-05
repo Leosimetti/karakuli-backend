@@ -14,7 +14,7 @@ from app.routers.lists import api
          )
 async def get_list_items(
         list_id_or_name: str,
-        _: User = Depends(get_current_user()),
+        # _: User = Depends(get_current_user()),
         session: AsyncSession = Depends(get_db_session),
 ):
     # Todo compress this duplicate code into a separate function or depends or class method
