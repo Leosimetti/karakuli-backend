@@ -25,7 +25,7 @@ class Lesson(Base, BaseModel):
     # item = relationship(BaseType, back_populates="lesson", uselist=False)
 
     @staticmethod
-    async def getContent(session: AsyncSession, lesson_id: int):
+    async def get_content(session: AsyncSession, lesson_id: int):
         query = select(Lesson).where(
             Lesson.id == lesson_id
         )

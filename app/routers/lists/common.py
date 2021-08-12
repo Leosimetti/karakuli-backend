@@ -1,13 +1,14 @@
-from fastapi import status, Depends, HTTPException, Query
+from fastapi import status, Depends, HTTPException, Query, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.depends import get_current_user, get_db_session
 from app.models import User, StudyList
-from app.routers.lists import api
+
+api = APIRouter(tags=["Study List"], prefix="")
 
 
 @api.post(
-    "",
+    "/",
     status_code=status.HTTP_201_CREATED,
     responses={
         409: {"detail": "This name is already taken."},

@@ -43,7 +43,7 @@ class StudyList(Base, BaseModel):
         tmp = await session.execute(lessons_filtered)
         lesson_ids = tmp.scalars().all()
 
-        result = [await Lesson.getContent(session, l_id) for l_id in lesson_ids]
+        result = [await Lesson.get_content(session, l_id) for l_id in lesson_ids]
 
         return result
 

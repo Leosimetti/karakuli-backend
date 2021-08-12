@@ -1,10 +1,11 @@
-from fastapi import status, Depends, HTTPException
+from fastapi import status, Depends, HTTPException, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User, StudyList, Lesson, StudyItem
 from app.schemas.word import LessonInList
 from app.depends import get_db_session, get_current_user
-from app.routers.lists import api
+
+api = APIRouter(tags=["Study List items"], prefix="")
 
 
 # Todo create a Depends() for extracting the id
@@ -33,7 +34,7 @@ async def get_list_items(
         )
 
     lesson_ids = list(map(lambda item: item.lesson_id, study_list.items))
-    lessons = [await Lesson.getContent(session, l_id) for l_id in lesson_ids]
+    lessons = [await Lesson.get_content(session, l_id) for l_id in lesson_ids]
     # Todo mb append notes as positions are already reflected in the order of items
 
     return lessons

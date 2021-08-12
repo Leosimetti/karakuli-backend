@@ -15,16 +15,16 @@ api = APIRouter(tags=["Review"], prefix="/reviews")
 
 
 @api.post(
-    "/{word_id}",
+    "/{lesson_id}",
     status_code=status.HTTP_201_CREATED,
 )
 async def review_word(
-        word_id: int,
+        lesson_id: int,
         review: ReviewSubmit,
         current_user: User = Depends(get_current_user("reviews")),
         session: AsyncSession = Depends(get_db_session)
 ):
-    rev: Review = await Review.get(session, current_user.id, word_id, review.review_type)
+    rev: Review = await Review.get(session, current_user.id, lesson_id, review.review_type)
     if not rev:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -119,5 +119,5 @@ def list_current_user_reviews(
     # Todo check of doing a db query is more efficient
     filter_func = lambda x: x.review_date <= datetime.datetime.timestamp(now)
     result = list(filter(filter_func, current_user.reviews))
-    result_with_content = list(map(lambda x: Lesson.getContent(session, x.id), result))
+    result_with_content = list(map(lambda x: Lesson.get_content(session, x.id), result))
     return result_with_content
