@@ -68,7 +68,7 @@ async def add_lesson_to_review(
     if lessons is None:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail='No lessons proved to add.'
+            detail='No lessons to add.'
         )
     lessons = set(lessons)
     already_added = []
