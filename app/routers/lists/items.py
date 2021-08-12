@@ -9,8 +9,11 @@ from app.routers.lists import api
 
 # Todo create a Depends() for extracting the id
 
-@api.get("{list_id_or_name}/items",
+@api.get("/{list_id_or_name}/items",
          status_code=status.HTTP_200_OK,
+         responses={
+             404: {"detail": "List not found."},
+         }
          )
 async def get_list_items(
         list_id_or_name: str,
@@ -31,13 +34,20 @@ async def get_list_items(
 
     lesson_ids = list(map(lambda item: item.lesson_id, study_list.items))
     lessons = [await Lesson.getContent(session, l_id) for l_id in lesson_ids]
+    # Todo mb append notes as positions are already reflected in the order of items
 
     return lessons
 
 
+# Todo somehow make responses refer to actual responses instead of copy-paste
 @api.post(
-    "{list_id_or_name}/items",
+    "/{list_id_or_name}/items",
     status_code=status.HTTP_201_CREATED,
+    responses={
+        403: {"detail": "You cannot add to this list."},
+        404: {"detail": "List not found./Lesson not found."},
+        409: {"detail": "This item is already in the list."},
+    }
 )
 async def add_item_to_study_list(
         list_id_or_name: str,
@@ -62,7 +72,6 @@ async def add_item_to_study_list(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='List not found.'
         )
-
     if study_list.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -94,7 +103,13 @@ async def add_item_to_study_list(
 # Todo create a Depends() for extracting the id
 @api.put(
     "/{list_id_or_name}/items",
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
+    responses={
+        403: {"detail": "You cannot edit this list."},
+        404: {"detail": "List not found./Item not found."},
+        409: {"detail": "This item is already in the list."},
+        422: {"detail": "No information to update provided."},
+    }
 )
 async def update_item_information_in_list(
         list_id_or_name: str,

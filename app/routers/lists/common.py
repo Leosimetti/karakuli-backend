@@ -34,9 +34,11 @@ async def create_study_list(
 
 
 # Todo create a Depends() for extracting the id
-# Todo mb create a separate endpoint for the content of the list?
 @api.get(
-    "/{list_id_or_name}"
+    "/{list_id_or_name}",
+    responses={
+        404: {"detail": "List not found."},
+    }
 )
 async def get_list_by_id_or_name(
         list_id_or_name: str,
