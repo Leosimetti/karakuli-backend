@@ -41,4 +41,5 @@ httpx
 pytest-cov
 aioredis
 pytest-xdist
+pytest-mock
 python-dotenv

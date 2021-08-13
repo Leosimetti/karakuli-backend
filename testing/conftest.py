@@ -87,3 +87,16 @@ async def create_list(name: str, main_user: bool, ac: AsyncClient):
                         headers={"Authorization": f"Bearer {token}"}
                         )
     return token, res
+
+
+async def register_and_get_token(ac):
+    from testing.test_auth import TestJWT
+
+    res = await register_user(PROPER_USER, ac)
+    email = PROPER_USER["email"]
+    psw = PROPER_USER["password"]
+    assert res.status_code == 201, res.content
+    res = await TestJWT.login(TestJWT, email, psw, ac)
+    assert res.status_code == 200, res.content
+    token = res.json()["access_token"]
+    return token

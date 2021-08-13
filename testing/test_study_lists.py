@@ -1,5 +1,5 @@
 from httpx import AsyncClient
-from testing.conftest import LISTS_PATH, create_list
+from testing.conftest import LISTS_PATH, create_list, pytestmark
 
 LIST_NAME = "coolList"
 
