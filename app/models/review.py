@@ -6,16 +6,26 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import relationship
 
-from app.models import Base
-from app.models.lessons.lesson import Lesson
+from app.models import Base, BaseModel
+from app.models.lessons.lesson import Lesson, LessonType
 
 
 class ReviewType(_Enum):
+    # TODO Add a constraint for review types to lesson types via the mapping below
     meaning = auto()
     reading = auto()
-    # spelling = auto() # Todo make these types available
+    other = auto()
+    # spelling = auto() # Todo make these types available in a proper way
     # listening = auto()
     # pronunciation = auto()
+
+
+LESSON_TO_REVIEW_MAPPING = {
+    LessonType.kanji: [ReviewType.meaning, ReviewType.reading],
+    LessonType.word: [ReviewType.meaning, ReviewType.reading],
+    LessonType.radical: [ReviewType.meaning],
+    LessonType.grammar: [ReviewType.other],
+}
 
 
 # Todo dehardcode table references
@@ -36,6 +46,7 @@ class Review(Base):
 
     @staticmethod
     async def get(session: AsyncSession, user_id: int, lesson_id: int, review_type: ReviewType):
+        # Todo add boundary checking for ids
         result = await session.execute(
             select(Review).where(
                 and_(
