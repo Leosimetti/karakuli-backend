@@ -23,21 +23,24 @@ async def add(
 
     return radical
 
+# TODO PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
+import os
 
-@api.post(
-    "/parse",
-    status_code=status.HTTP_200_OK,
-)
-async def parse(
-        no_variations: bool = False,
-        session: AsyncSession = Depends(get_db_session),
-):
-    if await Radical.get_by_radical(session, "⼀"):  # Todo remove this retarded if
-        return "Already parsed"
-    else:
-        gen = radicals(no_variations=no_variations)
-        for _ in range(50):
-            w = next(gen)
-            await Radical.create(session, dict=w)
+if os.getenv("IS_DEV"):
+    @api.post(
+        "/parse",
+        status_code=status.HTTP_200_OK,
+    )
+    async def parse(
+            no_variations: bool = False,
+            session: AsyncSession = Depends(get_db_session),
+    ):
+        if await Radical.get_by_radical(session, "⼀"):  # Todo remove this retarded if
+            return "Already parsed"
+        else:
+            gen = radicals(no_variations=no_variations)
+            for _ in range(50):
+                w = next(gen)
+                await Radical.create(session, dict=w)
 
-    return "Done"
+        return "Done"
