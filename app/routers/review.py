@@ -1,9 +1,9 @@
-import datetime
+from datetime import datetime
 
 from fastapi import APIRouter, status, Depends, Query, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 
 from app.models import User, Review, Word, Lesson
 from app.models.review import ReviewType, LESSON_TO_REVIEW_MAPPING
@@ -35,7 +35,7 @@ async def review_item(
             detail='Review not found.'
         )
 
-    if rev.review_date > datetime.datetime.now():
+    if rev.review_date > datetime.now():
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='This item is not available for review yet.'
@@ -111,7 +111,7 @@ async def add_lesson_to_review(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail='No lessons to add.'
         )
-    lessons = set(lessons) # removing duplicates
+    lessons = set(lessons)  # removing duplicates
     already_added = []
     successfully_added = []
 
@@ -136,8 +136,9 @@ async def add_lesson_to_review(
                             total_incorrect=0,
                             review_date=new_time)
 
-            if await Review.get(session, current_user.id, lesson_id, r_type):
-                already_added.append(review)
+            existing_review = await Review.get(session, current_user.id, lesson_id, r_type)
+            if existing_review:
+                already_added.append(existing_review)
             else:
                 session.add(review)
                 successfully_added.append(review)
@@ -155,16 +156,19 @@ async def add_lesson_to_review(
     "",
     status_code=status.HTTP_200_OK,
 )
-def list_current_user_reviews(
+async def list_due_user_reviews(
+        limit: Optional[int] = None,
         session: AsyncSession = Depends(get_db_session),
         current_user: User = Depends(get_current_user("reviews", "reviews.lesson")),
 ):
     # Todo only give reviews that are from the current list???? Allow users to combine lists?
     # Todo maybe somehow add the study list note????
-    now = datetime.datetime.now()
+    now = datetime.now()
     # now = datetime.datetime.timestamp(now)
+    # Todo check if this is ok to do
+    reviews = current_user.reviews[:limit] if limit else current_user.reviews
     # Todo check of doing a db query is more efficient
     filter_func = lambda x: x.review_date <= now
-    result = list(filter(filter_func, current_user.reviews))
-    result_with_content = list(map(lambda x: Lesson.get_content(session, x.id), result))
+    result = list(filter(filter_func, reviews))
+    result_with_content = [await Lesson.get_content(session, x.lesson_id) for x in result]
     return result_with_content
