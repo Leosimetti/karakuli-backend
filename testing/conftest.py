@@ -16,6 +16,17 @@ LISTS_PATH = BASE_PATH + lists_api.prefix
 LESSONS_PATH = BASE_PATH + lessons_api.prefix
 REVIEWS_PATH = BASE_PATH + review_api.prefix
 
+PROPER_USER = user = dict(
+    email="user@example.com",
+    username="sass",
+    password="String1337"
+)
+PROPER_USER2 = dict(
+    email="toltallydifferentuser@differentxample.com",
+    username="anotherSass",
+    password="String228"
+)
+
 
 # Todo Find out what causes "RuntimeError: Event loop is closed"
 

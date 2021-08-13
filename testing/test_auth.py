@@ -1,17 +1,6 @@
 from httpx import AsyncClient
 
-from testing.conftest import AUTH_PATH, register_user, get_current_user, pytestmark
-
-PROPER_USER = user = dict(
-    email="user@example.com",
-    username="sass",
-    password="String1337"
-)
-PROPER_USER2 = dict(
-    email="toltallydifferentuser@differentxample.com",
-    username="anotherSass",
-    password="String228"
-)
+from testing.conftest import AUTH_PATH, register_user, get_current_user, pytestmark, PROPER_USER, PROPER_USER2
 
 
 class TestGeneral:
