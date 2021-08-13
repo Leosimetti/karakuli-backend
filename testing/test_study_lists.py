@@ -1,26 +1,5 @@
 from httpx import AsyncClient
-from testing.conftest import LISTS_PATH, pytestmark
-
-
-async def create_list(name: str, main_user: bool, ac: AsyncClient):
-    from testing.test_auth import TestJWT, register_user, PROPER_USER, PROPER_USER2
-    if main_user:
-        await register_user(PROPER_USER, ac)
-        email = PROPER_USER["email"]
-        psw = PROPER_USER["password"]
-    else:
-        await register_user(PROPER_USER2, ac)
-        email = PROPER_USER2["email"]
-        psw = PROPER_USER2["password"]
-    res = await TestJWT.login(TestJWT, email, psw, ac)
-    token = res.json()["access_token"]
-
-    res = await ac.post(LISTS_PATH,
-                        params={"name": name},
-                        headers={"Authorization": f"Bearer {token}"}
-                        )
-    return token, res
-
+from testing.conftest import LISTS_PATH, create_list
 
 LIST_NAME = "coolList"
 

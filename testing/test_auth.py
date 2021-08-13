@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from testing.conftest import AUTH_PATH, pytestmark
+from testing.conftest import AUTH_PATH, register_user, get_current_user, pytestmark
 
 PROPER_USER = user = dict(
     email="user@example.com",
@@ -12,24 +12,6 @@ PROPER_USER2 = dict(
     username="anotherSass",
     password="String228"
 )
-
-
-async def register_user(usr, ac: AsyncClient):
-    res = await ac.post(
-        AUTH_PATH + "/register",
-        json=usr
-    )
-
-    return res
-
-
-async def get_current_user(access_token, ac: AsyncClient):
-    res = await ac.get(
-        AUTH_PATH + "/me",
-        headers={"Authorization": f"Bearer {access_token}"}
-    )
-
-    return res
 
 
 class TestGeneral:
