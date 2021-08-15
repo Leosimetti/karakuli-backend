@@ -15,7 +15,7 @@ app = FastAPI(
 )
 app.router.prefix = "/api/v1"
 
-# Todo stop the app if db is unreachable ???
+# Todo @todo stop the app if db is unreachable ???
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,7 +30,7 @@ db_engine = create_async_engine(
     future=True
 )
 
-# TODO PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
+# Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
 import os
 
 if os.getenv("IS_DEV"):

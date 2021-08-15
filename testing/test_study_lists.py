@@ -78,7 +78,7 @@ class TestList:
 
         # Adding items
         expected_item_ids = []
-        for item_id, pos in zip([1, 30, 50], range(1, 4)):  # Todo mb dehardcode ids
+        for item_id, pos in zip([1, 30, 50], range(1, 4)):  # Todo @todo mb dehardcode ids
             res = await ac.post(list1_items_path_id,
                                 json={
                                     "lesson_id": item_id,
@@ -141,6 +141,6 @@ class TestList:
                                 )
             assert res.status_code == 403
 
-    # Todo test item position/name/note updates
+    # Todo @todo test item position/name/note updates
 
-    # Todo test the /study endpoint
+    # Todo @todo test the /study endpoint

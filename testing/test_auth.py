@@ -86,7 +86,7 @@ class TestJWT:
         assert res.status_code == 404, res.content
         assert res.json() == {"detail": "Invalid Credentials"}, res.json()
 
-    # Todo understand why not work
+    # Todo @todo understand why not work
     async def test_token_refresh(self, ac: AsyncClient):
         async def refresh(tkn):
             return await ac.post(self.JWT_PATH + "/refresh",

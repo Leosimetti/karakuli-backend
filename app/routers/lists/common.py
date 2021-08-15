@@ -7,6 +7,7 @@ from app.models import User, StudyList
 api = APIRouter(tags=["Study List"], prefix="")
 
 
+# Todo @todo add a way to change user' current list
 @api.post(
     "/",
     status_code=status.HTTP_201_CREATED,
@@ -34,7 +35,7 @@ async def create_study_list(
     return study_list
 
 
-# Todo create a Depends() for extracting the id
+# Todo @todo create a Depends() for extracting the id
 @api.get(
     "/{list_id_or_name}",
     responses={
@@ -44,11 +45,11 @@ async def create_study_list(
 async def get_list_by_id_or_name(
         list_id_or_name: str,
         session: AsyncSession = Depends(get_db_session),
-        # _: User = Depends(get_current_user()), # Todo should this be locked?
+        # _: User = Depends(get_current_user()), # Todo @todo should this be locked?
 ):
-    # Todo add limit for the amount of words?
-    # Todo make it so that word id is not repeated int the item and word
-    # Todo figure out how to use class field names instead of str to load fields
+    # Todo @todo add limit for the amount of words?
+    # Todo @todo make it so that word id is not repeated int the item and word
+    # Todo @todo figure out how to use class field names instead of str to load fields
 
     if list_id_or_name.isnumeric():
         result = await StudyList.get_by_id(session, list_id_or_name)

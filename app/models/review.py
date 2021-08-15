@@ -11,11 +11,11 @@ from app.models.lessons.lesson import Lesson, LessonType
 
 
 class ReviewType(_Enum):
-    # TODO Add a constraint for review types to lesson types via the mapping below
-    meaning = auto()
-    reading = auto()
-    other = auto()
-    # spelling = auto() # Todo make these types available in a proper way
+    # Todo @todo Add a constraint for review types to lesson types via the mapping below
+    meaning = "meaning"
+    reading = "reading"
+    other = "other"
+    # spelling = auto() # Todo @todo make these types available in a proper way
     # listening = auto()
     # pronunciation = auto()
 
@@ -28,7 +28,7 @@ LESSON_TO_REVIEW_MAPPING = {
 }
 
 
-# Todo dehardcode table references
+# Todo @todo dehardcode table references
 class Review(Base):
     __tablename__ = 'reviews'
 
@@ -46,7 +46,7 @@ class Review(Base):
 
     @staticmethod
     async def get(session: AsyncSession, user_id: int, lesson_id: int, review_type: ReviewType):
-        # Todo add boundary checking for ids
+        # Todo @todo add boundary checking for ids
         result = await session.execute(
             select(Review).where(
                 and_(

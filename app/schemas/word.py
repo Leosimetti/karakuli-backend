@@ -8,8 +8,8 @@ class LessonInList(BaseModel):
     position: Optional[int]
 
 
-# Todo change str to constr with proper validation
-# Todo add a ENUM of word types
+# Todo @todo change str to constr with proper validation
+# Todo @todo add a ENUM of word types
 class WordCreate(BaseModel):
     meaning: str
     type: str

@@ -16,7 +16,7 @@ LISTS_PATH = BASE_PATH + lists_api.prefix
 LESSONS_PATH = BASE_PATH + lessons_api.prefix
 REVIEWS_PATH = BASE_PATH + review_api.prefix
 
-PROPER_USER = user = dict(
+PROPER_USER = dict(
     email="user@example.com",
     username="sass",
     password="String1337"
@@ -28,7 +28,7 @@ PROPER_USER2 = dict(
 )
 
 
-# Todo Find out what causes "RuntimeError: Event loop is closed"
+# Todo @todo Find out what causes "RuntimeError: Event loop is closed"
 
 @pytest.fixture
 async def ac():
@@ -45,7 +45,7 @@ async def ac():
 
 
 @pytest.fixture
-async def fill_db():  # Todo change this to actual functions instead of endpoints
+async def fill_db():  # Todo @todo change this to actual functions instead of endpoints
     async with AsyncClient(app=app_object, base_url="http://test") as ac:
         await ac.post(LESSONS_PATH + "/radicals" + "/parse")
         await ac.post(LESSONS_PATH + "/kanji" + "/parse")
@@ -89,12 +89,14 @@ async def create_list(name: str, main_user: bool, ac: AsyncClient):
     return token, res
 
 
-async def register_and_get_token(ac):
+async def register_and_get_token(ac, main_user: bool = True):
     from testing.test_auth import TestJWT
 
-    res = await register_user(PROPER_USER, ac)
-    email = PROPER_USER["email"]
-    psw = PROPER_USER["password"]
+    usr = PROPER_USER if main_user else PROPER_USER2
+
+    res = await register_user(usr, ac)
+    email = usr["email"]
+    psw = usr["password"]
     assert res.status_code == 201, res.content
     res = await TestJWT.login(TestJWT, email, psw, ac)
     assert res.status_code == 200, res.content

@@ -23,8 +23,8 @@ async def create_a_user(
     Creates a unverified user in the database
     and sends the verification email.
     """
-    # Todo send EMAIL
-    # Todo add checks for credentials (if already exists)
+    # Todo @todo send EMAIL
+    # Todo @todo add checks for credentials (if already exists)
 
     tmp = await UserTable.get_by_email(session, user.email)
     if tmp:
@@ -41,7 +41,7 @@ async def create_a_user(
     return user_db
 
 
-# Todo add proper return model to hide some fields
+# Todo @todo add proper return model to hide some fields
 @api.get("/me")
 async def get_current_user(
         user=Depends(get_current_user())
@@ -55,7 +55,7 @@ async def get_current_user(
     status_code=status.HTTP_200_OK,
 )
 def request_verification_token():
-    # Todo implement
+    # Todo @todo implement
     # if user is already verified - say NO-NO
     # if Not logged in            - do nothing
     # if ok                       - return token
@@ -68,5 +68,5 @@ def request_verification_token():
     status_code=status.HTTP_200_OK,
 )
 def verify_user(token: str):
-    # Todo implement
+    # Todo @todo implement
     return "VERIFIED"

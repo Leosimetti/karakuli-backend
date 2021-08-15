@@ -8,8 +8,9 @@ class TestReview:
 
     async def test_review_add_get(self, ac, fill_db):
 
-        # Creating a user first
+        # Creating users first
         token = await register_and_get_token(ac)
+        token2 = await register_and_get_token(ac, main_user=False)
 
         # Not providing ant lessons for review
         for param in [{"lesson_id": []}, None]:
@@ -38,6 +39,18 @@ class TestReview:
             assert res.status_code == 200, res.content
             for item in res.json():
                 added.append(item)
+
+            # Trying to access the file using as a different user
+            # res = await ac.get(REVIEWS_PATH + f"/{review_id}",
+            #                    headers={"Authorization": f"Bearer {token2}"},
+            #                    )
+            # assert res.status_code == 403, res.content
+
+        # Trying to get a non-existent item
+        res = await ac.get(REVIEWS_PATH + "/50000",
+                           headers={"Authorization": f"Bearer {token}"},
+                           )
+        assert res.status_code == 404
 
         func = lambda x: x.get("lesson_id")
         assert sorted(resulting_reviews["added"], key=func) == sorted(added, key=func)
@@ -78,9 +91,22 @@ class TestReview:
             assert res.status_code == 200
             expected_lessons.append(res.json())
 
+        # Getting not yet ready reviews
+        res = await ac.get(REVIEWS_PATH,
+                           headers={"Authorization": f"Bearer {token}"},
+                           )
+        assert res.status_code == 200, res.content
+        assert res.json() == []
+
+        # Advancing time and getting ready reviews
         class FakeDatetime:
+            interval = datetime.timedelta(minutes=21)
+
+            def __init__(self, interval):
+                self.interval = interval
+
             def now(self=datetime.datetime):
-                return datetime.datetime(year=2100, month=1, day=1)
+                return datetime.datetime.now() + self.interval
 
         mocker.patch("app.routers.review.datetime", FakeDatetime)
         res = await ac.get(REVIEWS_PATH,
@@ -90,5 +116,12 @@ class TestReview:
         func = lambda x: x.get("lesson_id")
         assert sorted(res.json(), key=func) == sorted(expected_lessons, key=func)
 
-        # https://github.com/pytest-dev/pytest-mock
-        # datetime.datetime.now()
+        # Reviewing each lesson
+
+
+        # Getting not yet ready reviews
+        res = await ac.get(REVIEWS_PATH,
+                           headers={"Authorization": f"Bearer {token}"},
+                           )
+        assert res.status_code == 200, res.content
+        assert res.json() == []

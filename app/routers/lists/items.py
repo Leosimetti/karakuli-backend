@@ -8,7 +8,7 @@ from app.depends import get_db_session, get_current_user
 api = APIRouter(tags=["Study List items"], prefix="")
 
 
-# Todo create a Depends() for extracting the id
+# Todo @todo create a Depends() for extracting the id
 
 @api.get("/{list_id_or_name}/items",
          status_code=status.HTTP_200_OK,
@@ -21,7 +21,7 @@ async def get_list_items(
         # _: User = Depends(get_current_user()),
         session: AsyncSession = Depends(get_db_session),
 ):
-    # Todo compress this duplicate code into a separate function or depends or class method
+    # Todo @todo compress this duplicate code into a separate function or depends or class method
     if list_id_or_name.isnumeric():
         study_list = await StudyList.get_by_id(session, list_id_or_name, "user", "items")
     else:
@@ -35,12 +35,12 @@ async def get_list_items(
 
     lesson_ids = list(map(lambda item: item.lesson_id, study_list.items))
     lessons = [await Lesson.get_content(session, l_id) for l_id in lesson_ids]
-    # Todo mb append notes as positions are already reflected in the order of items
+    # Todo @todo mb append notes as positions are already reflected in the order of items
 
     return lessons
 
 
-# Todo somehow make responses refer to actual responses instead of copy-paste
+# Todo @todo somehow make responses refer to actual responses instead of copy-paste
 @api.post(
     "/{list_id_or_name}/items",
     status_code=status.HTTP_201_CREATED,
@@ -62,7 +62,7 @@ async def add_item_to_study_list(
             detail='Lesson not found.'
         )
 
-    # Todo compress this duplicate code into a separate function or depends or class method
+    # Todo @todo compress this duplicate code into a separate function or depends or class method
     if list_id_or_name.isnumeric():
         study_list = await StudyList.get_by_id(session, list_id_or_name, "user", "items")
     else:
@@ -100,8 +100,8 @@ async def add_item_to_study_list(
     return item
 
 
-# Todo Check if changing positions can behave in strange ways
-# Todo create a Depends() for extracting the id
+# Todo @todo Check if changing positions can behave in strange ways
+# Todo @todo create a Depends() for extracting the id
 @api.put(
     "/{list_id_or_name}/items",
     status_code=status.HTTP_200_OK,
@@ -124,7 +124,7 @@ async def update_item_information_in_list(
             detail='No information to update provided.'
         )
 
-    # Todo compress this duplicate code into a separate function or depends or class method
+    # Todo @todo compress this duplicate code into a separate function or depends or class method
     if list_id_or_name.isnumeric():
         study_list = await StudyList.get_by_id(session, list_id_or_name, "user", "items")
     else:

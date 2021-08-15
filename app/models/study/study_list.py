@@ -12,7 +12,7 @@ from app.models.lessons import Lesson
 from app.models.review import Review
 
 
-# Todo dehardcode table references
+# Todo @todo dehardcode table references
 class StudyList(Base, BaseModel):
     __tablename__ = 'studylists'
 
@@ -29,7 +29,7 @@ class StudyList(Base, BaseModel):
 
     @staticmethod
     async def get_n_new_words(session: AsyncSession, list_id: int, user_id: int, n: int):
-        # Todo find out why negatives crash
+        # Todo @todo find out why negatives crash
         select_items = select(StudyItem.lesson_id).where(StudyItem.list_id == list_id)
         select_reviews = select(Review.lesson_id).where(Review.user_id == user_id)
         removed_intersection = except_(select_items, select_reviews)

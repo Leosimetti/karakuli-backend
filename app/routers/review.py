@@ -49,7 +49,7 @@ async def review_item(
 
     rev.srs_stage = new_stage
     rev.review_date = new_date
-    rev.total_correct += 1  # Todo maybe add a limit to incorrect answers, in which case it will be 0
+    rev.total_correct += 1  # Todo @todo maybe add a limit to incorrect answers, in which case it will be 0
 
     await session.commit()
     await session.refresh(rev)
@@ -71,9 +71,10 @@ async def get_reviews_for_lesson(
         session: AsyncSession = Depends(get_db_session)
 ):
     reviews = []
-    for r_type in ReviewType._member_map_:  # Todo find a better way to access values of enum
+    for r_type in ReviewType._member_map_:  # Todo @todo find a better way to access values of enum
         rev: Review = await Review.get(session, current_user.id, lesson_id, r_type)
 
+        # Todo @todo check if this is actually necessary
         if rev:
             if rev.user_id != current_user.id:
                 raise HTTPException(
@@ -83,7 +84,7 @@ async def get_reviews_for_lesson(
             else:
                 reviews.append(rev)
 
-    if reviews is []:
+    if not reviews:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Review not found.'
@@ -104,7 +105,7 @@ async def add_lesson_to_review(
         session: AsyncSession = Depends(get_db_session),
         lessons: List[int] = Query(None, alias="lesson_id")
 ):
-    # Todo mb optimize the query?
+    # Todo @todo mb optimize the query?
 
     if lessons is None:
         raise HTTPException(
@@ -125,8 +126,8 @@ async def add_lesson_to_review(
         review_types = LESSON_TO_REVIEW_MAPPING[lesson_type]
 
         # Creating necessary review types for the current lesson
-        for r_type in review_types:  # Todo find a better way to access values of enum
-            _, new_time = srs.correct_answer(0, False)  # Todo make it look less stupid?
+        for r_type in review_types:  # Todo @todo find a better way to access values of enum
+            _, new_time = srs.correct_answer(0, False)  # Todo @todo make it look less stupid?
             # new_time = datetime.datetime.timestamp(new_time)
             review = Review(user_id=current_user.id,
                             lesson_id=lesson_id,
@@ -144,7 +145,7 @@ async def add_lesson_to_review(
                 successfully_added.append(review)
 
     await session.commit()
-    # Todo check if there is a better way to do batch adds
+    # Todo @todo check if there is a better way to do batch adds
     return {
         "added": successfully_added,
         "already_added": already_added,
@@ -161,13 +162,13 @@ async def list_due_user_reviews(
         session: AsyncSession = Depends(get_db_session),
         current_user: User = Depends(get_current_user("reviews", "reviews.lesson")),
 ):
-    # Todo only give reviews that are from the current list???? Allow users to combine lists?
-    # Todo maybe somehow add the study list note????
+    # Todo @todo only give reviews that are from the current list???? Allow users to combine lists?
+    # Todo @todo maybe somehow add the study list note????
     now = datetime.now()
     # now = datetime.datetime.timestamp(now)
-    # Todo check if this is ok to do
+    # Todo @todo check if this is ok to do
     reviews = current_user.reviews[:limit] if limit else current_user.reviews
-    # Todo check of doing a db query is more efficient
+    # Todo @todo check of doing a db query is more efficient
     filter_func = lambda x: x.review_date <= now
     result = list(filter(filter_func, reviews))
     result_with_content = [await Lesson.get_content(session, x.lesson_id) for x in result]

@@ -13,8 +13,8 @@ def kanji():
         table = soup.find_all("table")[1]
         tbody = table.find_all("tbody")[0]
 
-        # Todo make it add more radicals to kanji
-        # Todo somehow integrate readings
+        # Todo @todo make it add more radicals to kanji
+        # Todo @todo somehow integrate readings
         for row in tbody.find_all("tr"):
             data = list(map(lambda tag: tag.text, row.find_all("td")))
             if len(data) == 9:

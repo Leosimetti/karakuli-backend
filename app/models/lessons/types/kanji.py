@@ -23,7 +23,7 @@ association_readings = Table('kanji_to_readings', Base.metadata,
 class Kanji(Base, BaseType):
     __tablename__ = _table_name
 
-    character = Column(String, nullable=False, unique=True) # Todo add length constraint
+    character = Column(String, nullable=False, unique=True) # Todo @todo add length constraint
     meaning = Column(String, nullable=False)
     strokes = Column(Integer, nullable=False)
     joyo_level = Column(String)

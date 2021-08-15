@@ -18,7 +18,7 @@ async def add(
         session: AsyncSession = Depends(get_db_session),
         _: User = Depends(get_current_user())
 ):
-    # Todo Add some checks before adding the word? mb ЛЕВЕНШТАЙН ДЫСТАНС
+    # Todo @todo Add some checks before adding the word? mb ЛЕВЕНШТАЙН ДЫСТАНС
     word = await Word.create(session, word)
 
     return word

@@ -13,7 +13,7 @@ from jose import jwt, JWTError
 
 
 async def get_db_session() -> AsyncSession:
-    # Todo check if having session maker here is okay
+    # Todo @todo check if having session maker here is okay
     db_session_maker = sessionmaker(
         db_engine,
         expire_on_commit=False,
@@ -24,7 +24,7 @@ async def get_db_session() -> AsyncSession:
         yield session
 
 
-# Todo see if this is the right way?
+# Todo @todo see if this is the right way?
 async def get_redis() -> aioredis.Redis:
     async with aioredis.from_url(settings.REDIS_URL, decode_responses=True) as redis:
         yield redis

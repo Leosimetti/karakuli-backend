@@ -7,7 +7,7 @@ from app.scrapper import kanji
 
 api = APIRouter(tags=["Kanji"], prefix="/kanji")
 
-# TODO PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
+# Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
 import os
 
 if os.getenv("IS_DEV"):
@@ -18,7 +18,7 @@ if os.getenv("IS_DEV"):
     async def parse(
             session: AsyncSession = Depends(get_db_session),
     ):
-        if await Kanji.get_by_kanji(session, "亜"):  # Todo remove this retarded if
+        if await Kanji.get_by_kanji(session, "亜"):  # Todo @todo remove this retarded if
             return "Already parsed"
         else:
             gen = kanji()

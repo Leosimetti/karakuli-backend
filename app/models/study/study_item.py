@@ -7,7 +7,7 @@ from app.models import Base
 from app.models.lessons import Lesson
 
 
-# Todo dehardcode table references
+# Todo @todo dehardcode table references
 class StudyItem(Base):
     __tablename__ = 'studyitems'
 
@@ -17,7 +17,7 @@ class StudyItem(Base):
     position = Column(Integer, nullable=False)
     note = Column(Text())
 
-    lesson = relationship(Lesson)  # Todo check if this is useless
+    lesson = relationship(Lesson)  # Todo @todo check if this is useless
 
     @staticmethod
     async def get(session: AsyncSession, list_id: int, lesson_id: int):

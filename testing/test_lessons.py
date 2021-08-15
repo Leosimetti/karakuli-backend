@@ -16,7 +16,7 @@ class TestKanji:
         assert False, "Not implemented"
 
 
-# Todo refactor using inheritance or delete
+# Todo @todo refactor using inheritance or delete
 class TestRadicals:
     PATH = LESSONS_PATH + "/radicals"
 

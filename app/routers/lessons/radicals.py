@@ -18,12 +18,12 @@ async def add(
         session: AsyncSession = Depends(get_db_session),
         _: User = Depends(get_current_user())
 ):
-    # Todo check if already exists, as has to be unique
+    # Todo @todo check if already exists, as has to be unique
     radical = await Radical.create(session, rad)
 
     return radical
 
-# TODO PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
+# Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
 import os
 
 if os.getenv("IS_DEV"):
@@ -35,7 +35,7 @@ if os.getenv("IS_DEV"):
             no_variations: bool = False,
             session: AsyncSession = Depends(get_db_session),
     ):
-        if await Radical.get_by_radical(session, "⼀"):  # Todo remove this retarded if
+        if await Radical.get_by_radical(session, "⼀"):  # Todo @todo remove this retarded if
             return "Already parsed"
         else:
             gen = radicals(no_variations=no_variations)
