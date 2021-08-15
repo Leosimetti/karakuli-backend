@@ -74,7 +74,7 @@ async def get_reviews_for_lesson(
     for r_type in ReviewType._member_map_:  # Todo @todo find a better way to access values of enum
         rev: Review = await Review.get(session, current_user.id, lesson_id, r_type)
 
-        # Todo @todo check if this is actually necessary
+        # Todo @todo check if this is actually necessary AMOGUS
         if rev:
             if rev.user_id != current_user.id:
                 raise HTTPException(
