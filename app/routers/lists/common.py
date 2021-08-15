@@ -1,19 +1,25 @@
-from fastapi import status, Depends, HTTPException, Query
+from fastapi import status, Depends, HTTPException, Query, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.depends import get_current_user, get_db_session
 from app.models import User, StudyList
-from app.routers.lists import api
+
+api = APIRouter(tags=["Study List"], prefix="")
 
 
+# Todo @todo add a way to change user' current list
 @api.post(
-    "",
-    status_code=status.HTTP_200_OK,
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        409: {"detail": "This name is already taken."},
+    }
 )
 async def create_study_list(
         name: str = Query(..., regex=r"\D"),
         session: AsyncSession = Depends(get_db_session),
         current_user: User = Depends(get_current_user()),
+
 ):
     if await StudyList.get_by_name(session, name):
         raise HTTPException(
@@ -29,24 +35,26 @@ async def create_study_list(
     return study_list
 
 
-# Todo create a Depends() for extracting the id
-# Todo mb create a separate endpoint for the content of the list?
+# Todo @todo create a Depends() for extracting the id
 @api.get(
-    "/{list_id_or_name}"
+    "/{list_id_or_name}",
+    responses={
+        404: {"detail": "List not found."},
+    }
 )
 async def get_list_by_id_or_name(
         list_id_or_name: str,
         session: AsyncSession = Depends(get_db_session),
-        # _: User = Depends(get_current_user()), # Todo should this be locked?
+        # _: User = Depends(get_current_user()), # Todo @todo should this be locked?
 ):
-    # Todo add limit for the amount of words?
-    # Todo make it so that word id is not repeated int the item and word
-    # Todo figure out how to use class field names instead of str to load fields
+    # Todo @todo add limit for the amount of words?
+    # Todo @todo make it so that word id is not repeated int the item and word
+    # Todo @todo figure out how to use class field names instead of str to load fields
 
     if list_id_or_name.isnumeric():
-        result = await StudyList.get_by_id(session, list_id_or_name, "items", "items.word")
+        result = await StudyList.get_by_id(session, list_id_or_name)
     else:
-        result = await StudyList.get_by_name(session, list_id_or_name, "items", "items.word")
+        result = await StudyList.get_by_name(session, list_id_or_name)
 
     if result:
         return result

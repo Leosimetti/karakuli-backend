@@ -15,6 +15,11 @@ if DATABASE_URL is None:
 else:
     DATABASE_URL = "postgresql+asyncpg://" + DATABASE_URL.split("://")[1]
 
+# Redis db
+REDIS_URL = os.getenv("REDIS_URL")
+if REDIS_URL is None:
+    logger.warning("Could not load redis URL. Problems with token refresh will occur.")
+
 # Auth
 ALGORITHM = "HS256"
 
@@ -22,6 +27,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get('JWT_EXPIRE')
 if ACCESS_TOKEN_EXPIRE_MINUTES is None:
     logger.warning('Cannot load JWT_EXPIRE, setting to default (30).')
     ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+REFRESH_TOKEN_EXPIRE_MINUTES = os.environ.get('JWT_REFRESH')
+if REFRESH_TOKEN_EXPIRE_MINUTES is None:
+    logger.warning('Cannot load JWT_REFRESH, setting to default (Expire*2).')
+    REFRESH_TOKEN_EXPIRE_MINUTES = ACCESS_TOKEN_EXPIRE_MINUTES*2
 
 SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
 if SECRET_KEY is None:

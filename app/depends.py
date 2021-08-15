@@ -1,9 +1,11 @@
+import aioredis
 from fastapi import Depends, HTTPException, status
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from app.models.user import User
 from app import db_engine
+from app import settings
 
 from app.settings import ALGORITHM, SECRET_KEY
 from app.authentication import oauth2_scheme
@@ -11,7 +13,7 @@ from jose import jwt, JWTError
 
 
 async def get_db_session() -> AsyncSession:
-    # Todo check if having session maker here is okay
+    # Todo @todo check if having session maker here is okay
     db_session_maker = sessionmaker(
         db_engine,
         expire_on_commit=False,
@@ -20,6 +22,13 @@ async def get_db_session() -> AsyncSession:
     )
     async with db_session_maker() as session:
         yield session
+
+
+# Todo @todo see if this is the right way?
+async def get_redis() -> aioredis.Redis:
+    async with aioredis.from_url(settings.REDIS_URL, decode_responses=True) as redis:
+        yield redis
+    await redis.close()
 
 
 def get_current_user(*fields_to_load) -> callable:

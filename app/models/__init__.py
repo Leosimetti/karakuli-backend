@@ -11,6 +11,7 @@ class BaseModel:
 
     @classmethod
     async def get_by_id(cls, session: AsyncSession, id: int, *fields_to_load):
+        # Todo @todo add boundary checking for ids
         query = select(cls).where(cls.id == int(id))
 
         if fields_to_load:
@@ -23,7 +24,7 @@ class BaseModel:
 
 
 from app.models.review import Review
-from app.models.word import Word
 from app.models.user import User
-from app.models.study_item import StudyItem
-from app.models.study_list import StudyList
+from app.models.lessons import Lesson, Example, Reading
+from app.models.lessons.types import Word, Kanji, Grammar, Radical
+from app.models.study import StudyList, StudyItem

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import create_async_engine
+import aioredis
 
 import app.settings
 
@@ -14,6 +15,8 @@ app = FastAPI(
 )
 app.router.prefix = "/api/v1"
 
+# Todo @todo stop the app if db is unreachable ???
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ORIGINS,
@@ -22,22 +25,27 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-# Create engine.
 db_engine = create_async_engine(
     settings.DATABASE_URL,
-    future=True,
-    echo=True  # todo turn off
+    future=True
 )
+
+# Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
+import os
+
+if os.getenv("IS_DEV"):
+    @app.router.post("/drop")
+    async def drop_and_recreate_db():
+        async with db_engine.begin() as conn:
+            from app.models import Base
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
+
+        return 'DONE'
 
 
 @app.on_event("startup")
 async def startup():
-    async with db_engine.begin() as conn:
-        from app.models import Base
-        # Todo fuck go back
-        async with db_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
     import app.routers
 
 

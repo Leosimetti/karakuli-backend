@@ -2,15 +2,15 @@ from pydantic import BaseModel, Json
 from typing import Optional
 
 
-class WordInList(BaseModel):
-    word_id: int
+class LessonInList(BaseModel):
+    lesson_id: int
     note: Optional[str]
     position: Optional[int]
 
 
+# Todo @todo change str to constr with proper validation
+# Todo @todo add a ENUM of word types
 class WordCreate(BaseModel):
     meaning: str
-    readings: str
-    kanji: str
-    example: str
-    meta: Json
+    type: str
+    links: Json
