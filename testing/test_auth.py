@@ -1,3 +1,5 @@
+import time
+
 from httpx import AsyncClient
 
 from testing.conftest import AUTH_PATH, register_user, get_current_user, pytestmark, PROPER_USER, PROPER_USER2
@@ -108,6 +110,7 @@ class TestJWT:
         new_refresh_token = res.json()["refresh_token"]
 
         # Another proper refresh
+        time.sleep(1)
         res = await refresh(new_refresh_token)
         assert res.status_code == 200, res.content
 

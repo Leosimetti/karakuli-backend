@@ -16,7 +16,7 @@ api = APIRouter(tags=["Common auth"])
     status_code=status.HTTP_201_CREATED,
 )
 async def create_a_user(
-        user: UserCreate,
+        user: UserCreate = Depends(UserCreate.as_form),
         session: AsyncSession = Depends(get_db_session),
 ):
     """

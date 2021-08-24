@@ -24,8 +24,8 @@ def create_access_token(data: dict):
 
 
 async def create_refresh_token(data, redis):
-    time.sleep(1)  # Todo @todo RETARD!!!!!!!! find a better way to ensure generation of different tokens
-    payload = data.copy() 
+    # time.sleep(1)  # Todo @todo RETARD!!!!!!!! find a better way to ensure generation of different tokens
+    payload = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
     payload.update({"exp": expire})
     encoded_jwt = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
