@@ -1,3 +1,8 @@
+import datetime
+import os
+import shutil
+import time
+
 import pytest
 
 import app
@@ -44,17 +49,36 @@ async def ac():
     await app.shutdown()
 
 
+DB_NAME = "test.sqlite"
+DB_BACKUP = DB_NAME + ".back"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def clear_db():
+    names = [DB_NAME, DB_BACKUP]
+
+    for name in names:
+        if os.path.exists(name):
+            os.remove(name)
+
+
 @pytest.fixture
 async def fill_db():  # Todo @todo change this to actual functions instead of endpoints
-    async with AsyncClient(app=app_object, base_url="http://test") as ac:
-        await ac.post(LESSONS_PATH + "/radicals" + "/parse")
-        await ac.post(LESSONS_PATH + "/kanji" + "/parse")
+    # Todo create a database on first use and then yield it
+
+    if not os.path.exists(DB_BACKUP):
+        async with AsyncClient(app=app_object, base_url="http://test") as ac:
+            await ac.post(LESSONS_PATH + "/radicals" + "/parse")
+            await ac.post(LESSONS_PATH + "/kanji" + "/parse")
+        shutil.copy(DB_NAME, DB_BACKUP)
+    else:
+        shutil.copy(DB_BACKUP, DB_NAME)
 
 
 async def register_user(usr_model, ac: AsyncClient):
     res = await ac.post(
         AUTH_PATH + "/register",
-        json=usr_model
+        data=usr_model
     )
 
     return res
