@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import create_async_engine
-import aioredis
 
-import app.settings
+import app.settings as settings
 
 app = FastAPI(
     title="Karakuli",
