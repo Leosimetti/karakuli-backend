@@ -1,18 +1,22 @@
-from bs4 import BeautifulSoup
-from urllib.request import Request, urlopen
 import pickle
+from urllib.request import Request, urlopen
+
+from bs4 import BeautifulSoup
 
 WIKIPEDIA = r"https://en.wikipedia.org/wiki/List_of_j%C5%8Dy%C5%8D_kanji"
 
 RADICALS = r"https://kanjialive.com/214-traditional-kanji-radicals/"
-ALTERNATIVE_RADICALS = r"https://en.wikipedia.org/wiki/List_of_kanji_radicals_by_frequency"
+ALTERNATIVE_RADICALS = (
+    r"https://en.wikipedia.org/wiki/List_of_kanji_radicals_by_frequency"
+)
 
 
 # Todo @todo create a funtion that takes a generator and make all other functions use it
 
+
 def kanji():
     try:
-        with open('kanji.pickle', 'rb') as f:
+        with open("kanji.pickle", "rb") as f:
             data = pickle.load(f)
 
             for k in data:
@@ -44,7 +48,7 @@ def kanji():
                     }
 
                     results.append(word_entry)
-            with open('kanji.pickle', 'wb') as f:
+            with open("kanji.pickle", "wb") as f:
                 pickle.dump(results, f)
 
             return results
@@ -52,10 +56,10 @@ def kanji():
 
 def radicals(no_variations=False):
     try:
-        with open('radicals.pickle', 'rb') as f:
+        with open("radicals.pickle", "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        hdr = {'User-Agent': 'Mozilla/5.0'}
+        hdr = {"User-Agent": "Mozilla/5.0"}
         req = Request(RADICALS, headers=hdr)
         with urlopen(req) as req:
             soup = BeautifulSoup(req.read().decode("utf-8"), features="html.parser")
@@ -71,12 +75,12 @@ def radicals(no_variations=False):
                 radical = {
                     "strokes": int(data[0]),
                     "radical": data[1],
-                    "meaning": data[3]
+                    "meaning": data[3],
                 }
 
                 results.append(radical)
 
-            with open('radicals.pickle', 'wb') as f:
+            with open("radicals.pickle", "wb") as f:
                 pickle.dump(results, f)
 
             return results

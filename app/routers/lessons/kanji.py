@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.depends import get_db_session
@@ -13,13 +13,14 @@ api = APIRouter(tags=["Kanji"], prefix="/kanji")
 # Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
 
 if os.getenv("IS_DEV"):
+
     @api.post(
         "/parse",
         status_code=status.HTTP_200_OK,
     )
     async def parse(
-            amount: Optional[int] = 50,
-            session: AsyncSession = Depends(get_db_session),
+        amount: Optional[int] = 50,
+        session: AsyncSession = Depends(get_db_session),
     ):
         if await Kanji.get_by_kanji(session, "亜"):  # Todo @todo remove this retarded if
             return "Already parsed"

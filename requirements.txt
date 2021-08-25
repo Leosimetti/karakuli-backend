@@ -43,3 +43,5 @@ aioredis
 pytest-xdist
 pytest-mock
 python-dotenv
+gevent
+pre-commit

@@ -1,10 +1,10 @@
-from fastapi import status, Depends, APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.authentication import hash
-from app.depends import get_db_session, get_current_user
+from app.depends import get_current_user, get_db_session
 from app.models import User as UserTable
-from app.schemas.user import UserGeneralResponse, UserCreate
+from app.schemas.user import UserCreate, UserGeneralResponse
 from app.settings import logger
 
 api = APIRouter(tags=["Common auth"])
@@ -16,8 +16,8 @@ api = APIRouter(tags=["Common auth"])
     status_code=status.HTTP_201_CREATED,
 )
 async def create_a_user(
-        user: UserCreate = Depends(UserCreate.as_form),
-        session: AsyncSession = Depends(get_db_session),
+    user: UserCreate = Depends(UserCreate.as_form),
+    session: AsyncSession = Depends(get_db_session),
 ):
     """
     Creates a unverified user in the database
@@ -28,8 +28,9 @@ async def create_a_user(
 
     tmp = await UserTable.get_by_email(session, user.email)
     if tmp:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                            detail=f"User already exists")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=f"User already exists"
+        )
 
     user_db = UserTable(**user.dict(exclude={"password"}), password=hash(user.password))
     session.add(user_db)
@@ -43,9 +44,7 @@ async def create_a_user(
 
 # Todo @todo add proper return model to hide some fields
 @api.get("/me")
-async def get_current_user(
-        user=Depends(get_current_user())
-):
+async def get_current_user(user=Depends(get_current_user())):
     return user
 
 

@@ -1,17 +1,19 @@
-from sqlalchemy import Column, Integer, Table, ForeignKey, JSON, String
+from sqlalchemy import JSON, Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
 
 from app.models import Base
 from app.models.lessons.example import Example
 from app.models.lessons.types.base_type import BaseType
 
-_table_name = 'grammars'
+_table_name = "grammars"
 
-association_examples = Table('grammar_to_examples', Base.metadata,
-                             Column('grammar', ForeignKey(_table_name + ".lesson_id"), primary_key=True),
-                             Column('example', ForeignKey(Example.id), primary_key=True),
-                             Column("meta", JSON)
-                             )
+association_examples = Table(
+    "grammar_to_examples",
+    Base.metadata,
+    Column("grammar", ForeignKey(_table_name + ".lesson_id"), primary_key=True),
+    Column("example", ForeignKey(Example.id), primary_key=True),
+    Column("meta", JSON),
+)
 
 
 class Grammar(Base, BaseType):

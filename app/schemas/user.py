@@ -1,10 +1,8 @@
-from pydantic import BaseModel, EmailStr, constr
-
 import inspect
 from typing import Type
 
 from fastapi import Form
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, constr
 from pydantic.fields import ModelField
 
 
@@ -39,7 +37,7 @@ def as_form(cls: Type[BaseModel]):
     sig = inspect.signature(as_form_func)
     sig = sig.replace(parameters=new_parameters)
     as_form_func.__signature__ = sig  # type: ignore
-    setattr(cls, 'as_form', as_form_func)
+    setattr(cls, "as_form", as_form_func)
     return cls
 
 
@@ -49,6 +47,7 @@ class UserBase(BaseModel):
 
     def __str__(self):
         return f"{self.username} with {self.email}"
+
 
 @as_form
 class UserCreate(UserBase):

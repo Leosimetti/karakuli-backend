@@ -1,7 +1,13 @@
-from datetime import datetime, timedelta
 from collections import namedtuple
+from datetime import datetime, timedelta
 
-stage = namedtuple("stage", ["interval", "name", ])
+stage = namedtuple(
+    "stage",
+    [
+        "interval",
+        "name",
+    ],
+)
 
 normal_timings = [
     stage(timedelta(minutes=20), "Initial 1"),
@@ -14,7 +20,7 @@ normal_timings = [
     stage(timedelta(weeks=1), "Guru 1"),
     stage(timedelta(weeks=2), "Guru 2"),
     stage(timedelta(weeks=4), "Master"),
-    stage(timedelta(weeks=8), "Enlightened")
+    stage(timedelta(weeks=8), "Enlightened"),
 ]
 
 accelerated_timings = [
@@ -28,7 +34,7 @@ accelerated_timings = [
     stage(timedelta(days=3), "Guru 1 (accelerated)"),
     stage(timedelta(weeks=1), "Guru 2 (accelerated)"),
     stage(timedelta(weeks=2), "Master (accelerated)"),
-    stage(timedelta(weeks=4), "Enlightened (accelerated)")
+    stage(timedelta(weeks=4), "Enlightened (accelerated)"),
 ]
 
 
@@ -37,16 +43,26 @@ def correct_answer(current_stage, accelerated):
     if current_stage < (len(accelerated_timings) - 1):
         new_stage += 1
 
-    interval = accelerated_timings[new_stage].interval if accelerated else normal_timings[new_stage].interval
+    interval = (
+        accelerated_timings[new_stage].interval
+        if accelerated
+        else normal_timings[new_stage].interval
+    )
 
     return new_stage, datetime.now() + interval
 
 
 def incorrect_answer(current_stage, incorrect_answers_before_correct, accelerated):
     srs_penalty_factor = 2 if (current_stage > 6) else 1
-    new_stage = current_stage - (incorrect_answers_before_correct // 2 * srs_penalty_factor)
+    new_stage = current_stage - (
+        incorrect_answers_before_correct // 2 * srs_penalty_factor
+    )
     new_stage = max(new_stage, 0)
 
-    interval = accelerated_timings[new_stage].interval if accelerated else normal_timings[new_stage].interval
+    interval = (
+        accelerated_timings[new_stage].interval
+        if accelerated
+        else normal_timings[new_stage].interval
+    )
 
     return new_stage, datetime.now() + interval

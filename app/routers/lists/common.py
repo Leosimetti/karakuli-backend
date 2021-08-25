@@ -1,8 +1,8 @@
-from fastapi import status, Depends, HTTPException, Query, APIRouter
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.depends import get_current_user, get_db_session
-from app.models import User, StudyList
+from app.models import StudyList, User
 
 api = APIRouter(tags=["Study List"], prefix="")
 
@@ -13,18 +13,16 @@ api = APIRouter(tags=["Study List"], prefix="")
     status_code=status.HTTP_201_CREATED,
     responses={
         409: {"detail": "This name is already taken."},
-    }
+    },
 )
 async def create_study_list(
-        name: str = Query(..., regex=r"\D"),
-        session: AsyncSession = Depends(get_db_session),
-        current_user: User = Depends(get_current_user()),
-
+    name: str = Query(..., regex=r"\D"),
+    session: AsyncSession = Depends(get_db_session),
+    current_user: User = Depends(get_current_user()),
 ):
     if await StudyList.get_by_name(session, name):
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail='This name is already taken.'
+            status_code=status.HTTP_409_CONFLICT, detail="This name is already taken."
         )
 
     study_list = StudyList(name=name, user_id=current_user.id)
@@ -40,12 +38,12 @@ async def create_study_list(
     "/{list_id_or_name}",
     responses={
         404: {"detail": "List not found."},
-    }
+    },
 )
 async def get_list_by_id_or_name(
-        list_id_or_name: str,
-        session: AsyncSession = Depends(get_db_session),
-        # _: User = Depends(get_current_user()), # Todo @todo should this be locked?
+    list_id_or_name: str,
+    session: AsyncSession = Depends(get_db_session),
+    # _: User = Depends(get_current_user()), # Todo @todo should this be locked?
 ):
     # Todo @todo add limit for the amount of words?
     # Todo @todo make it so that word id is not repeated int the item and word
@@ -60,6 +58,5 @@ async def get_list_by_id_or_name(
         return result
     else:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='List not found.'
+            status_code=status.HTTP_404_NOT_FOUND, detail="List not found."
         )

@@ -1,20 +1,19 @@
-from sqlalchemy import Column, Integer, Boolean, String, Text, except_
-from sqlalchemy import ForeignKey
+from sqlalchemy import (Boolean, Column, ForeignKey, Integer, String, Text,
+                        except_)
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import relationship, selectinload
+from sqlalchemy.ext.orderinglist import count_from_1, ordering_list
 from sqlalchemy.future import select
-from sqlalchemy.ext.orderinglist import ordering_list, count_from_1
+from sqlalchemy.orm import relationship, selectinload
 
 from app.models import Base, BaseModel
-
-from app.models.study.study_item import StudyItem
 from app.models.lessons import Lesson
 from app.models.review import Review
+from app.models.study.study_item import StudyItem
 
 
 # Todo @todo dehardcode table references
 class StudyList(Base, BaseModel):
-    __tablename__ = 'studylists'
+    __tablename__ = "studylists"
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
@@ -24,11 +23,16 @@ class StudyList(Base, BaseModel):
     description = Column(Text())
 
     user = relationship("User", back_populates="created_study_lists")
-    items = relationship(StudyItem, order_by=StudyItem.position,
-                         collection_class=ordering_list('position', ordering_func=count_from_1))
+    items = relationship(
+        StudyItem,
+        order_by=StudyItem.position,
+        collection_class=ordering_list("position", ordering_func=count_from_1),
+    )
 
     @staticmethod
-    async def get_n_new_words(session: AsyncSession, list_id: int, user_id: int, n: int):
+    async def get_n_new_words(
+        session: AsyncSession, list_id: int, user_id: int, n: int
+    ):
         # Todo @todo find out why negatives crash
         select_items = select(StudyItem.lesson_id).where(StudyItem.list_id == list_id)
         select_reviews = select(Review.lesson_id).where(Review.user_id == user_id)
@@ -37,7 +41,9 @@ class StudyList(Base, BaseModel):
         tmp = await session.execute(removed_intersection)
         lesson_ids = tmp.scalars().all()
 
-        lessons_appropriate = select(StudyItem.lesson_id, StudyItem.position).where(StudyItem.lesson_id.in_(lesson_ids))
+        lessons_appropriate = select(StudyItem.lesson_id, StudyItem.position).where(
+            StudyItem.lesson_id.in_(lesson_ids)
+        )
         lessons_filtered = lessons_appropriate.order_by(StudyItem.position).limit(n)
 
         tmp = await session.execute(lessons_filtered)

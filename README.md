@@ -24,6 +24,6 @@ Currently available at https://karakuli-backend.herokuapp.com/docs
 ## How to start:
 Install python and run *main.py*
 
-OR 
+OR
 
 Install Docker and run *docker-compose up*

@@ -1,4 +1,5 @@
 from httpx import AsyncClient
+
 from testing.conftest import LESSONS_PATH, pytestmark
 
 
