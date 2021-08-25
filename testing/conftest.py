@@ -33,8 +33,22 @@ PROPER_USER2 = dict(
 )
 
 
-# Todo @todo Find out what causes "RuntimeError: Event loop is closed"
+class FakeRedis:
+    content = {}
 
+    async def get(self, key):
+        try:
+            res = self.content[key]
+        except KeyError:
+            res = None
+
+        return res
+
+    async def set(self, key, val):
+        self.content[key] = val
+
+
+# Todo @todo Find out what causes "RuntimeError: Event loop is closed"
 @pytest.fixture
 async def ac():
     from app import db_engine
@@ -43,9 +57,15 @@ async def ac():
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
+    # Faking redis
+    from app.depends import get_redis
+    FakeRedis.content = {}  # Todo check if doing so is OK
+    app_object.dependency_overrides[get_redis] = FakeRedis
+
     async with AsyncClient(app=app_object, base_url="http://test") as client:
         await app.startup()
         yield client
+
     await app.shutdown()
 
 
