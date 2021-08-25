@@ -38,6 +38,7 @@ async def jwt_login(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="Invalid Credentials")
 
+    # Todo mb change this to a different code
     if not verify(user.password, request.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="Incorrect password")

@@ -9,8 +9,6 @@ app = FastAPI(
     title="Karakuli",
     description="Cool japanese language thing",
     version="0.0.0",
-    # openapi_url="/openapi.json",
-    # root_path="/api/v1",
     docs_url="/"
 )
 app.router.prefix = "/api/v1"

@@ -1,3 +1,7 @@
+import datetime
+import os
+from typing import Optional
+
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,8 +27,8 @@ async def add(
 
     return radical
 
+
 # Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
-import os
 
 if os.getenv("IS_DEV"):
     @api.post(
@@ -32,15 +36,14 @@ if os.getenv("IS_DEV"):
         status_code=status.HTTP_200_OK,
     )
     async def parse(
+            amount: Optional[int] = 50,
             no_variations: bool = False,
             session: AsyncSession = Depends(get_db_session),
     ):
+
         if await Radical.get_by_radical(session, "⼀"):  # Todo @todo remove this retarded if
             return "Already parsed"
         else:
-            gen = radicals(no_variations=no_variations)
-            for _ in range(50):
-                w = next(gen)
-                await Radical.create(session, dict=w)
-
+            for _, k in zip(range(amount), radicals(no_variations=no_variations)):
+                await Radical.create(session, dict=k)
         return "Done"

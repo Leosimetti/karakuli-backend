@@ -26,14 +26,8 @@ class Lesson(Base, BaseModel):
 
     @staticmethod
     async def get_content(session: AsyncSession, lesson_id: int):
-        query = select(Lesson).where(
-            Lesson.id == lesson_id
-        )
-
-        tmp = await session.execute(query)
-
-        lesson = tmp.scalar()
-        lesson_table = lesson.type.value
-        result = await lesson_table.get_by_lesson_id(session, lesson_id)
+        lesson = await Lesson.get_by_id(session, lesson_id)
+        item_table = lesson.type.value
+        result = await item_table.get_by_lesson_id(session, lesson_id)
 
         return result
