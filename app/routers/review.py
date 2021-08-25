@@ -1,15 +1,15 @@
 from datetime import datetime
-
-from fastapi import APIRouter, status, Depends, Query, HTTPException
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 
-from app.models import User, Review, Word, Lesson
-from app.models.review import ReviewType, LESSON_TO_REVIEW_MAPPING
-from app.depends import get_db_session, get_current_user
-from app.schemas.review import ReviewSubmit
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 import app.srs as srs
+from app.depends import get_current_user, get_db_session
+from app.models import Lesson, Review, User, Word
+from app.models.review import LESSON_TO_REVIEW_MAPPING, ReviewType
+from app.schemas.review import ReviewSubmit
 
 api = APIRouter(tags=["Review"], prefix="/reviews")
 
@@ -18,31 +18,34 @@ api = APIRouter(tags=["Review"], prefix="/reviews")
     "/{lesson_id}",
     status_code=status.HTTP_201_CREATED,
     responses={
-        403: {"detail": 'This item is not available for review yet.'},
-        404: {"detail": 'Review not found.'}
-    }
+        403: {"detail": "This item is not available for review yet."},
+        404: {"detail": "Review not found."},
+    },
 )
 async def review_item(
-        lesson_id: int,
-        review: ReviewSubmit,
-        current_user: User = Depends(get_current_user("reviews")),
-        session: AsyncSession = Depends(get_db_session)
+    lesson_id: int,
+    review: ReviewSubmit,
+    current_user: User = Depends(get_current_user("reviews")),
+    session: AsyncSession = Depends(get_db_session),
 ):
-    rev: Review = await Review.get(session, current_user.id, lesson_id, review.review_type)
+    rev: Review = await Review.get(
+        session, current_user.id, lesson_id, review.review_type
+    )
     if not rev:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Review not found.'
+            status_code=status.HTTP_404_NOT_FOUND, detail="Review not found."
         )
 
     if rev.review_date > datetime.now():
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail='This item is not available for review yet.'
+            detail="This item is not available for review yet.",
         )
 
     if review.incorrect_answers:
-        new_stage, new_date = srs.incorrect_answer(rev.srs_stage, review.incorrect_answers, False)
+        new_stage, new_date = srs.incorrect_answer(
+            rev.srs_stage, review.incorrect_answers, False
+        )
         rev.total_incorrect += review.incorrect_answers
     else:
         new_stage, new_date = srs.correct_answer(rev.srs_stage, False)
@@ -61,17 +64,21 @@ async def review_item(
     "/{lesson_id}",
     status_code=status.HTTP_200_OK,
     responses={
-        403: {"detail": 'This item does not belong to the current user.'},
-        404: {"detail": 'Review not found.'}
-    }
+        403: {"detail": "This item does not belong to the current user."},
+        404: {"detail": "Review not found."},
+    },
 )
 async def get_reviews_for_lesson(
-        lesson_id: int,
-        current_user: User = Depends(get_current_user("reviews")),
-        session: AsyncSession = Depends(get_db_session)
+    lesson_id: int,
+    current_user: User = Depends(get_current_user("reviews")),
+    session: AsyncSession = Depends(get_db_session),
 ):
     reviews = []
-    for r_type in ReviewType._member_map_:  # Todo @todo find a better way to access values of enum
+    for (
+        r_type
+    ) in (
+        ReviewType._member_map_
+    ):  # Todo @todo find a better way to access values of enum
         rev: Review = await Review.get(session, current_user.id, lesson_id, r_type)
 
         # Todo @todo check if this is actually necessary AMOGUS
@@ -79,15 +86,14 @@ async def get_reviews_for_lesson(
             if rev.user_id != current_user.id:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail='This item does not belong to the current user.'
+                    detail="This item does not belong to the current user.",
                 )
             else:
                 reviews.append(rev)
 
     if not reviews:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Review not found.'
+            status_code=status.HTTP_404_NOT_FOUND, detail="Review not found."
         )
 
     return reviews
@@ -96,21 +102,19 @@ async def get_reviews_for_lesson(
 @api.post(
     "",
     status_code=status.HTTP_201_CREATED,
-    responses={
-        422: {"detail": 'No lessons to add.'}
-    }
+    responses={422: {"detail": "No lessons to add."}},
 )
 async def add_lesson_to_review(
-        current_user: User = Depends(get_current_user("reviews")),
-        session: AsyncSession = Depends(get_db_session),
-        lessons: List[int] = Query(None, alias="lesson_id")
+    current_user: User = Depends(get_current_user("reviews")),
+    session: AsyncSession = Depends(get_db_session),
+    lessons: List[int] = Query(None, alias="lesson_id"),
 ):
     # Todo @todo mb optimize the query?
 
     if lessons is None:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail='No lessons to add.'
+            detail="No lessons to add.",
         )
     lessons = set(lessons)  # removing duplicates
     already_added = []
@@ -126,18 +130,26 @@ async def add_lesson_to_review(
         review_types = LESSON_TO_REVIEW_MAPPING[lesson_type]
 
         # Creating necessary review types for the current lesson
-        for r_type in review_types:  # Todo @todo find a better way to access values of enum
-            _, new_time = srs.correct_answer(0, False)  # Todo @todo make it look less stupid?
+        for (
+            r_type
+        ) in review_types:  # Todo @todo find a better way to access values of enum
+            _, new_time = srs.correct_answer(
+                0, False
+            )  # Todo @todo make it look less stupid?
             # new_time = datetime.datetime.timestamp(new_time)
-            review = Review(user_id=current_user.id,
-                            lesson_id=lesson_id,
-                            type=r_type,
-                            srs_stage=0,
-                            total_correct=1,
-                            total_incorrect=0,
-                            review_date=new_time)
+            review = Review(
+                user_id=current_user.id,
+                lesson_id=lesson_id,
+                type=r_type,
+                srs_stage=0,
+                total_correct=1,
+                total_incorrect=0,
+                review_date=new_time,
+            )
 
-            existing_review = await Review.get(session, current_user.id, lesson_id, r_type)
+            existing_review = await Review.get(
+                session, current_user.id, lesson_id, r_type
+            )
             if existing_review:
                 already_added.append(existing_review)
             else:
@@ -149,7 +161,7 @@ async def add_lesson_to_review(
     return {
         "added": successfully_added,
         "already_added": already_added,
-        "non_existent": non_existent
+        "non_existent": non_existent,
     }
 
 
@@ -158,9 +170,9 @@ async def add_lesson_to_review(
     status_code=status.HTTP_200_OK,
 )
 async def list_due_user_reviews(
-        limit: Optional[int] = None,
-        session: AsyncSession = Depends(get_db_session),
-        current_user: User = Depends(get_current_user("reviews", "reviews.lesson")),
+    limit: Optional[int] = None,
+    session: AsyncSession = Depends(get_db_session),
+    current_user: User = Depends(get_current_user("reviews", "reviews.lesson")),
 ):
     # Todo @todo only give reviews that are from the current list???? Allow users to combine lists?
     # Todo @todo maybe somehow add the study list note????
@@ -171,5 +183,7 @@ async def list_due_user_reviews(
     # Todo @todo check of doing a db query is more efficient
     filter_func = lambda x: x.review_date <= now
     result = list(filter(filter_func, reviews))
-    result_with_content = [await Lesson.get_content(session, x.lesson_id) for x in result]
+    result_with_content = [
+        await Lesson.get_content(session, x.lesson_id) for x in result
+    ]
     return result_with_content

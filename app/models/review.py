@@ -1,7 +1,7 @@
-from enum import Enum as _Enum, auto
+from enum import Enum as _Enum
+from enum import auto
 
-from sqlalchemy import Column, Integer, and_
-from sqlalchemy import TIMESTAMP, Enum, ForeignKey
+from sqlalchemy import TIMESTAMP, Column, Enum, ForeignKey, Integer, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import relationship
@@ -30,7 +30,7 @@ LESSON_TO_REVIEW_MAPPING = {
 
 # Todo @todo dehardcode table references
 class Review(Base):
-    __tablename__ = 'reviews'
+    __tablename__ = "reviews"
 
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
     lesson_id = Column(Integer, ForeignKey(Lesson.id), primary_key=True)
@@ -45,14 +45,16 @@ class Review(Base):
     lesson = relationship(Lesson)
 
     @staticmethod
-    async def get(session: AsyncSession, user_id: int, lesson_id: int, review_type: ReviewType):
+    async def get(
+        session: AsyncSession, user_id: int, lesson_id: int, review_type: ReviewType
+    ):
         # Todo @todo add boundary checking for ids
         result = await session.execute(
             select(Review).where(
                 and_(
                     Review.user_id == user_id,
                     Review.lesson_id == lesson_id,
-                    Review.type == review_type
+                    Review.type == review_type,
                 )
             )
         )

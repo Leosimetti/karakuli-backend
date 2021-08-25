@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.depends import get_current_user, get_db_session
@@ -14,9 +14,9 @@ api = APIRouter(tags=["Words"], prefix="/words")
     status_code=status.HTTP_200_OK,
 )
 async def add(
-        word: WordCreate,
-        session: AsyncSession = Depends(get_db_session),
-        _: User = Depends(get_current_user())
+    word: WordCreate,
+    session: AsyncSession = Depends(get_db_session),
+    _: User = Depends(get_current_user()),
 ):
     # Todo @todo Add some checks before adding the word? mb ЛЕВЕНШТАЙН ДЫСТАНС
     word = await Word.create(session, word)

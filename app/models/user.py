@@ -1,15 +1,15 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import relationship
 
-from app.models import BaseModel, Base
-from app.models.study import StudyList
+from app.models import Base, BaseModel
 from app.models.review import Review
+from app.models.study import StudyList
 
 
 class User(Base, BaseModel):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
     email = Column(String(length=300), unique=True, nullable=False, index=True)
@@ -25,8 +25,6 @@ class User(Base, BaseModel):
 
     @staticmethod
     async def get_by_email(session: AsyncSession, email: str):
-        result = await session.execute(
-            select(User).where(User.email == email)
-        )
+        result = await session.execute(select(User).where(User.email == email))
 
         return result.scalar()

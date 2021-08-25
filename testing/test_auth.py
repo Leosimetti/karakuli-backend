@@ -2,7 +2,8 @@ import time
 
 from httpx import AsyncClient
 
-from testing.conftest import AUTH_PATH, register_user, get_current_user, pytestmark, PROPER_USER, PROPER_USER2
+from testing.conftest import (AUTH_PATH, PROPER_USER, PROPER_USER2,
+                              get_current_user, pytestmark, register_user)
 
 
 class TestGeneral:
@@ -29,11 +30,7 @@ class TestJWT:
 
     async def login(self, email, password, ac: AsyncClient):
         res = await ac.post(
-            self.JWT_PATH + "/login",
-            data=dict(
-                username=email,
-                password=password
-            )
+            self.JWT_PATH + "/login", data=dict(username=email, password=password)
         )
 
         return res
@@ -55,7 +52,9 @@ class TestJWT:
         assert res.status_code == 200, res.content
 
         # Removing the password because it gets hashed
-        expected_user_data = dict(**PROPER_USER, verified=False, current_study_list=1, id=1)
+        expected_user_data = dict(
+            **PROPER_USER, verified=False, current_study_list=1, id=1
+        )
         expected_user_data.pop("password")
 
         user_data = res.json()
@@ -91,8 +90,9 @@ class TestJWT:
     # Todo @todo understand why not work
     async def test_token_refresh(self, ac: AsyncClient):
         async def refresh(tkn):
-            return await ac.post(self.JWT_PATH + "/refresh",
-                                 params={"refresh_token": tkn})
+            return await ac.post(
+                self.JWT_PATH + "/refresh", params={"refresh_token": tkn}
+            )
 
         # Register and login
         res = await register_user(PROPER_USER, ac)
@@ -121,6 +121,7 @@ class TestJWT:
 
         # Using a bogus token
         from random import shuffle
+
         refresh_token = str(shuffle(list(refresh_token)))
         res = await refresh(refresh_token)
         assert res.status_code == 401, res.content

@@ -8,7 +8,7 @@ app = FastAPI(
     title="Karakuli",
     description="Cool japanese language thing",
     version="0.0.0",
-    docs_url="/"
+    docs_url="/",
 )
 app.router.prefix = "/api/v1"
 
@@ -22,23 +22,22 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-db_engine = create_async_engine(
-    settings.DATABASE_URL,
-    future=True
-)
+db_engine = create_async_engine(settings.DATABASE_URL, future=True)
 
 # Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
 import os
 
 if os.getenv("IS_DEV"):
+
     @app.router.post("/drop")
     async def drop_and_recreate_db():
         async with db_engine.begin() as conn:
             from app.models import Base
+
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
-        return 'DONE'
+        return "DONE"
 
 
 @app.on_event("startup")
@@ -46,6 +45,6 @@ async def startup():
     import app.routers
 
 
-@app.on_event('shutdown')
+@app.on_event("shutdown")
 async def shutdown() -> None:
     await db_engine.dispose()

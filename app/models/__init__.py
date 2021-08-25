@@ -1,7 +1,7 @@
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+from sqlalchemy.orm import selectinload
 
 Base: DeclarativeMeta = declarative_base()
 
@@ -23,8 +23,8 @@ class BaseModel:
         return result.scalar()
 
 
+from app.models.lessons import Example, Lesson, Reading
+from app.models.lessons.types import Grammar, Kanji, Radical, Word
 from app.models.review import Review
+from app.models.study import StudyItem, StudyList
 from app.models.user import User
-from app.models.lessons import Lesson, Example, Reading
-from app.models.lessons.types import Word, Kanji, Grammar, Radical
-from app.models.study import StudyList, StudyItem

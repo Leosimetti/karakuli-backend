@@ -1,12 +1,11 @@
 from enum import Enum as _Enum
 
-from sqlalchemy import Column, Integer
-from sqlalchemy import Enum
+from sqlalchemy import Column, Enum, Integer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.models import Base, BaseModel
-from app.models.lessons.types import Kanji, Radical, Word, Grammar
+from app.models.lessons.types import Grammar, Kanji, Radical, Word
 
 
 class LessonType(_Enum):
@@ -17,7 +16,7 @@ class LessonType(_Enum):
 
 
 class Lesson(Base, BaseModel):
-    __tablename__ = 'lessons'
+    __tablename__ = "lessons"
 
     id = Column(Integer, primary_key=True)
     type = Column(Enum(LessonType), nullable=False)

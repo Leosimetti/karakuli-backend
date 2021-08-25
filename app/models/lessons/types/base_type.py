@@ -1,11 +1,10 @@
 import asyncpg.exceptions
-from sqlalchemy import Column, Integer, ForeignKey, select
+from sqlalchemy import Column, ForeignKey, Integer, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import declared_attr
 
 
 class BaseType:
-
     @declared_attr
     def lesson_id(self):
         return Column(Integer, ForeignKey("lessons.id"), primary_key=True)

@@ -4,13 +4,13 @@ import shutil
 import time
 
 import pytest
+from httpx import AsyncClient
 
 import app
 from app.routers.auth import api as auth_api
-from app.routers.lists import api as lists_api
 from app.routers.lessons import api as lessons_api
+from app.routers.lists import api as lists_api
 from app.routers.review import api as review_api
-from httpx import AsyncClient
 
 app_object = app.app
 pytestmark = pytest.mark.asyncio
@@ -21,15 +21,11 @@ LISTS_PATH = BASE_PATH + lists_api.prefix
 LESSONS_PATH = BASE_PATH + lessons_api.prefix
 REVIEWS_PATH = BASE_PATH + review_api.prefix
 
-PROPER_USER = dict(
-    email="user@example.com",
-    username="sass",
-    password="String1337"
-)
+PROPER_USER = dict(email="user@example.com", username="sass", password="String1337")
 PROPER_USER2 = dict(
     email="toltallydifferentuser@differentxample.com",
     username="anotherSass",
-    password="String228"
+    password="String228",
 )
 
 
@@ -52,13 +48,16 @@ class FakeRedis:
 @pytest.fixture
 async def ac():
     from app import db_engine
+
     async with db_engine.begin() as conn:
         from app.models import Base
+
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
     # Faking redis
     from app.depends import get_redis
+
     FakeRedis.content = {}  # Todo check if doing so is OK
     app_object.dependency_overrides[get_redis] = FakeRedis
 
@@ -96,25 +95,22 @@ async def fill_db():  # Todo @todo change this to actual functions instead of en
 
 
 async def register_user(usr_model, ac: AsyncClient):
-    res = await ac.post(
-        AUTH_PATH + "/register",
-        data=usr_model
-    )
+    res = await ac.post(AUTH_PATH + "/register", data=usr_model)
 
     return res
 
 
 async def get_current_user(access_token, ac: AsyncClient):
     res = await ac.get(
-        AUTH_PATH + "/me",
-        headers={"Authorization": f"Bearer {access_token}"}
+        AUTH_PATH + "/me", headers={"Authorization": f"Bearer {access_token}"}
     )
 
     return res
 
 
 async def create_list(name: str, main_user: bool, ac: AsyncClient):
-    from testing.test_auth import TestJWT, PROPER_USER, PROPER_USER2
+    from testing.test_auth import PROPER_USER, PROPER_USER2, TestJWT
+
     if main_user:
         await register_user(PROPER_USER, ac)
         email = PROPER_USER["email"]
@@ -126,10 +122,9 @@ async def create_list(name: str, main_user: bool, ac: AsyncClient):
     res = await TestJWT.login(TestJWT, email, psw, ac)
     token = res.json()["access_token"]
 
-    res = await ac.post(LISTS_PATH,
-                        params={"name": name},
-                        headers={"Authorization": f"Bearer {token}"}
-                        )
+    res = await ac.post(
+        LISTS_PATH, params={"name": name}, headers={"Authorization": f"Bearer {token}"}
+    )
     return token, res
 
 

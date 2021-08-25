@@ -1,5 +1,6 @@
-import os
 import logging
+import os
+
 from uvicorn.config import logger
 
 # DB
@@ -23,19 +24,19 @@ if REDIS_URL is None:
 # Auth
 ALGORITHM = "HS256"
 
-ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get('JWT_EXPIRE')
+ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("JWT_EXPIRE")
 if ACCESS_TOKEN_EXPIRE_MINUTES is None:
-    logger.warning('Cannot load JWT_EXPIRE, setting to default (30).')
+    logger.warning("Cannot load JWT_EXPIRE, setting to default (30).")
     ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-REFRESH_TOKEN_EXPIRE_MINUTES = os.environ.get('JWT_REFRESH')
+REFRESH_TOKEN_EXPIRE_MINUTES = os.environ.get("JWT_REFRESH")
 if REFRESH_TOKEN_EXPIRE_MINUTES is None:
-    logger.warning('Cannot load JWT_REFRESH, setting to default (Expire*2).')
-    REFRESH_TOKEN_EXPIRE_MINUTES = ACCESS_TOKEN_EXPIRE_MINUTES*2
+    logger.warning("Cannot load JWT_REFRESH, setting to default (Expire*2).")
+    REFRESH_TOKEN_EXPIRE_MINUTES = ACCESS_TOKEN_EXPIRE_MINUTES * 2
 
-SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
 if SECRET_KEY is None:
-    logger.warning('Cannot load JWT_SECRET_KEY, generating random.')
+    logger.warning("Cannot load JWT_SECRET_KEY, generating random.")
     SECRET_KEY = os.urandom(64).hex()
 
 # CORS
