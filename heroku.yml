@@ -3,6 +3,6 @@ setup:
     APP_NAME: karakuli-backend
 build:
   docker:
-    web: DockerFile
+    web: Dockerfile
 run:
   web: python3 main.py

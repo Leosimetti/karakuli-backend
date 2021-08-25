@@ -3,7 +3,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: DockerFile
+      dockerfile: Dockerfile
     container_name: backend
     environment:
       REDIS_URL: "redis://kar-redis/"
@@ -21,7 +21,7 @@ services:
     image: woahbase/alpine-redis
     container_name: kar-redis
     ports:
-      - "6379:6379"
+      - "6379:6379" # Todo potentially close the port
 
   postgres:
     image: postgres:alpine
@@ -32,4 +32,4 @@ services:
 
 #    restart: always
     ports:
-      - "5432:5432"
+      - "5432:5432" # Todo potentially close the port
