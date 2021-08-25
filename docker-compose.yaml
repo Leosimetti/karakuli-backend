@@ -6,28 +6,23 @@ services:
       dockerfile: DockerFile
     container_name: backend
     environment:
-      DB_HOST: "mongo"
+      REDIS_URL: "redis://kar-redis/"
+      # Todo check if user:password are in correct order
+      DB_HOST: "postresql://${DATABASE_USER}:${DATABASE_PASS}@postgres"   # Todo Make it into a proper link with a proper password
       HOST_IP: "0.0.0.0"
+      PORT: 5000
     depends_on:
-      - mongo
+      - redis
+      - postgres
     ports:
       - "5000:5000"
 
-  mongo:
-    image: mongo
-    container_name: karakuli-mongo
+  redis:
+    image: woahbase/alpine-redis
+    container_name: kar-redis
     ports:
-      - "27017:27017"
+      - "6379:6379"
 
-  mongo-express:
-    image: mongo-express
-    container_name: mongo-express
-    environment:
-      ME_CONFIG_MONGODB_SERVER: "mongo"
-    depends_on:
-      - mongo
-    ports:
-      - "8081:8081"
   postgres:
     image: postgres:alpine
 
@@ -35,7 +30,6 @@ services:
       POSTGRES_USER: "${DATABASE_USER}"
       POSTGRES_PASSWORD: "${DATABASE_PASS}"
 
-    volumes:
-      - ./initialize_database.sh:/docker-entrypoint-initdb.d/initialize_database.sh
-
-    restart: always
+#    restart: always
+    ports:
+      - "5432:5432"
