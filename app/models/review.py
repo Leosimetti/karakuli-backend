@@ -1,5 +1,4 @@
 from enum import Enum as _Enum
-from enum import auto
 
 from sqlalchemy import TIMESTAMP, Column, Enum, ForeignKey, Integer, and_
 from sqlalchemy.ext.asyncio import AsyncSession

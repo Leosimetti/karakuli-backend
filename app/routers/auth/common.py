@@ -29,7 +29,7 @@ async def create_a_user(
     tmp = await UserTable.get_by_email(session, user.email)
     if tmp:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail=f"User already exists"
+            status_code=status.HTTP_409_CONFLICT, detail="User already exists"
         )
 
     user_db = UserTable(**user.dict(exclude={"password"}), password=hash(user.password))

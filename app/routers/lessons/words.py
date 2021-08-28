@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.depends import get_current_user, get_db_session
 from app.models import User, Word
 from app.schemas.word import WordCreate
-from app.scrapper import kanji
 
 api = APIRouter(tags=["Words"], prefix="/words")
 

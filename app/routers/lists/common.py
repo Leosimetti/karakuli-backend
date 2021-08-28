@@ -43,7 +43,6 @@ async def create_study_list(
 async def get_list_by_id_or_name(
     list_id_or_name: str,
     session: AsyncSession = Depends(get_db_session),
-    # _: User = Depends(get_current_user()), # Todo @todo should this be locked?
 ):
     # Todo @todo add limit for the amount of words?
     # Todo @todo make it so that word id is not repeated int the item and word

@@ -2,7 +2,6 @@ from enum import Enum as _Enum
 
 from sqlalchemy import Column, Enum, Integer
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
 from app.models import Base, BaseModel
 from app.models.lessons.types import Grammar, Kanji, Radical, Word

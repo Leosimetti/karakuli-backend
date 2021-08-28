@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import app.srs as srs
 from app.depends import get_current_user, get_db_session
-from app.models import Lesson, Review, User, Word
+from app.models import Lesson, Review, User
 from app.models.review import LESSON_TO_REVIEW_MAPPING, ReviewType
 from app.schemas.review import ReviewSubmit
 
@@ -78,7 +78,7 @@ async def get_reviews_for_lesson(
         r_type
     ) in (
         ReviewType._member_map_
-    ):  # Todo @todo find a better way to access values of enum
+    ):
         rev: Review = await Review.get(session, current_user.id, lesson_id, r_type)
 
         # Todo @todo check if this is actually necessary AMOGUS
@@ -132,7 +132,7 @@ async def add_lesson_to_review(
         # Creating necessary review types for the current lesson
         for (
             r_type
-        ) in review_types:  # Todo @todo find a better way to access values of enum
+        ) in review_types:
             _, new_time = srs.correct_answer(
                 0, False
             )  # Todo @todo make it look less stupid?
