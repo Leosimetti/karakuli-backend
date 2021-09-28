@@ -21,7 +21,7 @@ class BaseType:
         if pydantic_model:
             dict = pydantic_model.dict()
 
-        # Todo @todo check if this is retarded
+        # Todo @todo check if this try-except is retarded
         try:
             item = cls(**dict, lesson_id=lesson.id)
             session.add(item)

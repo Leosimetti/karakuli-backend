@@ -10,7 +10,7 @@ class Radical(Base, BaseType):
 
     radical = Column(
         String(2), nullable=False, unique=True
-    )  # Todo @todo check why length is not enforced
+    )
     meaning = Column(String, nullable=False)
     strokes = Column(Integer, nullable=False)
     # Todo @todo mb also store variations?

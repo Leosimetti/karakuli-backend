@@ -23,11 +23,9 @@ async def create_a_user(
     Creates a unverified user in the database
     and sends the verification email.
     """
-    # Todo @todo send EMAIL
-    # Todo @todo add checks for credentials (if already exists)
+    # Todo @todo send EMAIL fro verification
 
-    tmp = await UserTable.get_by_email(session, user.email)
-    if tmp:
+    if await UserTable.get_by_email(session, user.email):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="User already exists"
         )

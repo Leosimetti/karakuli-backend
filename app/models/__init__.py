@@ -11,7 +11,7 @@ class BaseModel:
 
     @classmethod
     async def get_by_id(cls, session: AsyncSession, id: int, *fields_to_load):
-        # Todo @todo add boundary checking for ids
+        # Todo @todo add boundary checking for ids (as some weird things happen for out of bound ids)
         query = select(cls).where(cls.id == int(id))
 
         if fields_to_load:

@@ -22,7 +22,7 @@ async def create_tokens(user_id, redis):
     }
 
 
-# Todo @todo check if refresh can be used to login
+# Todo @todo check if refresh can actually be used to login (if so, then it is stupid)
 @api.post(
     "/login",
     responses={
@@ -51,8 +51,6 @@ async def jwt_login(
     return tokens
 
 
-# Todo @todo check if this is implemented the right way, as it seems kind of pointless
-# Todo @todo mb make it so that the token can still be refreshed a minute after the actual expiration? But hoW?
 @api.post(
     "/refresh",
     response_model=Token,

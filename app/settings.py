@@ -1,11 +1,10 @@
-import logging
 import os
 
 from uvicorn.config import logger
 
 # DB
 DATABASE_URL = os.getenv("BEKA_DB")
-# Todo add checks whether BEKA is unreachable..
+# Todo @todo add checks whether BEKA is unreachable..
 if DATABASE_URL is None:
     logger.warning("Cannot load BEKA_DB, using heroku DB.")
     DATABASE_URL = os.getenv("DATABASE_URL")

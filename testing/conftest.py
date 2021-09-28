@@ -44,7 +44,6 @@ class FakeRedis:
         self.content[key] = val
 
 
-# Todo @todo Find out what causes "RuntimeError: Event loop is closed"
 @pytest.fixture
 async def ac():
     from app import db_engine
@@ -83,7 +82,6 @@ def clear_db():
 
 @pytest.fixture
 async def fill_db():  # Todo @todo change this to actual functions instead of endpoints
-    # Todo create a database on first use and then yield it
 
     if not os.path.exists(DB_BACKUP):
         async with AsyncClient(app=app_object, base_url="http://test") as ac:

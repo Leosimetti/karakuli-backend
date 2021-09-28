@@ -29,7 +29,7 @@ class Kanji(Base, BaseType):
 
     character = Column(
         String, nullable=False, unique=True
-    )  # Todo @todo add length constraint
+    )  # Todo @todo add length constraint?
     meaning = Column(String, nullable=False)
     strokes = Column(Integer, nullable=False)
     joyo_level = Column(String)

@@ -11,7 +11,6 @@ from app.scrapper import kanji
 api = APIRouter(tags=["Kanji"], prefix="/kanji")
 
 # Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
-
 if os.getenv("IS_DEV"):
 
     @api.post(

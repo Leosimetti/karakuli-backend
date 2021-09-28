@@ -7,7 +7,6 @@ services:
     container_name: backend
     environment:
       REDIS_URL: "redis://kar-redis/"
-      # Todo check if user:password are in correct order
       DB_HOST: "postresql://${DATABASE_USER}:${DATABASE_PASS}@postgres"
       HOST_IP: "0.0.0.0"
       PORT: 5000

@@ -44,9 +44,6 @@ async def get_list_by_id_or_name(
     list_id_or_name: str,
     session: AsyncSession = Depends(get_db_session),
 ):
-    # Todo @todo add limit for the amount of words?
-    # Todo @todo make it so that word id is not repeated int the item and word
-    # Todo @todo figure out how to use class field names instead of str to load fields
 
     if list_id_or_name.isnumeric():
         result = await StudyList.get_by_id(session, list_id_or_name)

@@ -14,7 +14,7 @@ class ReviewType(_Enum):
     meaning = "meaning"
     reading = "reading"
     other = "other"
-    # spelling = auto() # Todo @todo make these types available in a proper way
+    # spelling = auto() # Todo @todo make these types available in a proper way (not via a private variable)
     # listening = auto()
     # pronunciation = auto()
 
@@ -28,6 +28,7 @@ LESSON_TO_REVIEW_MAPPING = {
 
 
 # Todo @todo dehardcode table references
+# Todo @todo rename review_date to due_date
 class Review(Base):
     __tablename__ = "reviews"
 
@@ -47,7 +48,7 @@ class Review(Base):
     async def get(
         session: AsyncSession, user_id: int, lesson_id: int, review_type: ReviewType
     ):
-        # Todo @todo add boundary checking for ids
+        # Todo @todo add boundary checking for ids (some weird things happen when ids are big)
         result = await session.execute(
             select(Review).where(
                 and_(

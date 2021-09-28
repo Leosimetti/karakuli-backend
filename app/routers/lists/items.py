@@ -45,7 +45,7 @@ async def get_list_items(
     return lessons
 
 
-# Todo @todo somehow make responses refer to actual responses instead of copy-paste
+# Todo @todo somehow make responses refer to actual responses instead of copy-pasting codes and messages
 @api.post(
     "/{list_id_or_name}/items",
     status_code=status.HTTP_201_CREATED,

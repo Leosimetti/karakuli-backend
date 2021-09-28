@@ -19,7 +19,6 @@ async def get_db_session() -> AsyncSession:
         yield session
 
 
-# Todo @todo see if this is the right way?
 async def get_redis() -> aioredis.Redis:
     async with aioredis.from_url(settings.REDIS_URL, decode_responses=True) as redis:
         yield redis

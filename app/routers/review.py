@@ -81,7 +81,7 @@ async def get_reviews_for_lesson(
     ):
         rev: Review = await Review.get(session, current_user.id, lesson_id, r_type)
 
-        # Todo @todo check if this is actually necessary AMOGUS
+        # Todo @todo check if this is actually necessary
         if rev:
             if rev.user_id != current_user.id:
                 raise HTTPException(

@@ -12,7 +12,6 @@ app = FastAPI(
 )
 app.router.prefix = "/api/v1"
 
-# Todo @todo stop the app if db is unreachable ???
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,6 +21,7 @@ app.add_middleware(
     allow_credentials=True,
 )
 
+# Todo @todo add health checks for the database?
 db_engine = create_async_engine(settings.DATABASE_URL, future=True)
 
 # Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD

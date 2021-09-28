@@ -30,30 +30,6 @@ class StudyList(Base, BaseModel):
     )
 
     @staticmethod
-    async def get_n_new_words(
-        session: AsyncSession, list_id: int, user_id: int, n: int
-    ):
-        # Todo @todo find out why negatives crash
-        select_items = select(StudyItem.lesson_id).where(StudyItem.list_id == list_id)
-        select_reviews = select(Review.lesson_id).where(Review.user_id == user_id)
-        removed_intersection = except_(select_items, select_reviews)
-
-        tmp = await session.execute(removed_intersection)
-        lesson_ids = tmp.scalars().all()
-
-        lessons_appropriate = select(StudyItem.lesson_id, StudyItem.position).where(
-            StudyItem.lesson_id.in_(lesson_ids)
-        )
-        lessons_filtered = lessons_appropriate.order_by(StudyItem.position).limit(n)
-
-        tmp = await session.execute(lessons_filtered)
-        lesson_ids = tmp.scalars().all()
-
-        result = [await Lesson.get_content(session, l_id) for l_id in lesson_ids]
-
-        return result
-
-    @staticmethod
     async def get_by_name(session: AsyncSession, name: str, *fields_to_load):
         query = select(StudyList).where(
             StudyList.name == name,
