@@ -13,7 +13,7 @@ class User(Base, BaseModel):
 
     id = Column(Integer, primary_key=True)
     email = Column(String(length=300), unique=True, nullable=False, index=True)
-    username = Column(String(length=200), unique=True, nullable=False)
+    username = Column(String(length=200), nullable=False)
     password = Column(String(length=60), nullable=False)
     verified = Column(Boolean, default=False)
     current_list_id = Column(Integer, default=1)

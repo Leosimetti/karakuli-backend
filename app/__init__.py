@@ -25,19 +25,19 @@ app.add_middleware(
 db_engine = create_async_engine(settings.DATABASE_URL, future=True)
 
 # Todo @todo PLZ DO NOT FORGET TO REMOVE THIS IN PROD OR YOU ARE RETARD
-import os
+# import os
+#
+# if os.getenv("IS_DEV"):
 
-if os.getenv("IS_DEV"):
+@app.router.post("/drop")
+async def drop_and_recreate_db():
+    async with db_engine.begin() as conn:
+        from app.models import Base
 
-    @app.router.post("/drop")
-    async def drop_and_recreate_db():
-        async with db_engine.begin() as conn:
-            from app.models import Base
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
 
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
-
-        return "DONE"
+    return "DONE"
 
 
 @app.on_event("startup")
