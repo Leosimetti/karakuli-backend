@@ -41,10 +41,9 @@ async def jwt_login(
             status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Credentials"
         )
 
-    # Todo mb change this to a different code
     if not verify(user.password, request.password):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Incorrect password"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Incorrect password"
         )
 
     tokens = await create_tokens(user.id, redis)

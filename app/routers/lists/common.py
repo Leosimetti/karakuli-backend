@@ -58,6 +58,32 @@ async def get_list_by_id_or_name(
         )
 
 
+@api.post(
+    "/{list_id_or_name}",
+    responses={
+        404: {"detail": "List not found."},
+    },
+)
+async def choose_list_by_id_or_name(
+        list_id_or_name: str,
+        session: AsyncSession = Depends(get_db_session),
+        current_user: User = Depends(get_current_user()),
+):
+    if list_id_or_name.isnumeric():
+        result = await StudyList.get_by_id(session, list_id_or_name)
+    else:
+        result = await StudyList.get_by_name(session, list_id_or_name)
+
+    if result:
+        current_user.current_list_id = result.id
+        await session.commit()
+        return "All good"
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="List not found."
+        )
+
+
 @api.get(
     "/"
 )
