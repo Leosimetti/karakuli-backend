@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.depends import get_current_user, get_db_session
@@ -16,9 +17,9 @@ api = APIRouter(tags=["Study List"], prefix="")
     },
 )
 async def create_study_list(
-    name: str = Query(..., regex=r"\D"),
-    session: AsyncSession = Depends(get_db_session),
-    current_user: User = Depends(get_current_user()),
+        name: str = Query(..., regex=r"\D"),
+        session: AsyncSession = Depends(get_db_session),
+        current_user: User = Depends(get_current_user()),
 ):
     if await StudyList.get_by_name(session, name):
         raise HTTPException(
@@ -41,10 +42,9 @@ async def create_study_list(
     },
 )
 async def get_list_by_id_or_name(
-    list_id_or_name: str,
-    session: AsyncSession = Depends(get_db_session),
+        list_id_or_name: str,
+        session: AsyncSession = Depends(get_db_session),
 ):
-
     if list_id_or_name.isnumeric():
         result = await StudyList.get_by_id(session, list_id_or_name)
     else:
@@ -56,3 +56,14 @@ async def get_list_by_id_or_name(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="List not found."
         )
+
+
+@api.get(
+    "/"
+)
+async def get_available_lists(
+        session: AsyncSession = Depends(get_db_session),
+):
+    lists = await session.execute(select(StudyList))
+
+    return lists.scalars().all()
