@@ -35,7 +35,7 @@ class TestList:
     current_id = 0
 
     async def test_creation(
-        self, ac: AsyncClient, list_name=LIST_NAME, main_user: bool = True
+            self, ac: AsyncClient, list_name=LIST_NAME, main_user: bool = True
     ):
 
         # list creation
@@ -47,7 +47,8 @@ class TestList:
             "user_id": user_id,
             "approved": False,
             "name": list_name,
-            "description": None,
+            "description": "",
+            "img_url": "https://lh3.googleusercontent.com/proxy/TuyWP_h4w3SW2Satf3Q_9ay7i1xI9emvLKwd2D9up6-noNFknZKVek13cNsPNF6hhPYJ0c7sZNU2lOjhYYln3doPa9NyqkTLlyP1Zti0Trs35SQlPgDQ1qdN"
         }
 
         token, res = await create_list(list_name, main_user, ac)
@@ -78,7 +79,7 @@ class TestList:
         # Adding items
         expected_item_ids = []
         for item_id, pos in zip(
-            [1, 30, 50], range(1, 4)
+                [1, 30, 50], range(1, 4)
         ):  # Todo @todo mb dehardcode ids
             res = await ac.post(
                 list1_items_path_id,
@@ -126,7 +127,7 @@ class TestList:
 
         # Using wrong tokens to add to lists
         for list_path, token in zip(
-            [list_2_path_name, list1_items_path_name], [token1, token2]
+                [list_2_path_name, list1_items_path_name], [token1, token2]
         ):
             res = await ac.post(
                 list_path,

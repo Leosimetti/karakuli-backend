@@ -74,7 +74,7 @@ class TestJWT:
 
         # Wrong password
         res = await self.login(email, psw2, ac)
-        assert res.status_code == 404, res.content
+        assert res.status_code == 403, res.content
         assert res.json() == {"detail": "Incorrect password"}, res.json()
 
         # Non-existent email

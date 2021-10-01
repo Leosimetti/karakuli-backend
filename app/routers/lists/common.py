@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.depends import get_current_user, get_db_session
 from app.models import StudyList, User
+from app.schemas.study_list import StudyListCreate
 
 api = APIRouter(tags=["Study List"], prefix="")
 
@@ -17,16 +18,16 @@ api = APIRouter(tags=["Study List"], prefix="")
     },
 )
 async def create_study_list(
-        name: str = Query(..., regex=r"\D"),
+        new_list: StudyListCreate,
         session: AsyncSession = Depends(get_db_session),
         current_user: User = Depends(get_current_user()),
 ):
-    if await StudyList.get_by_name(session, name):
+    if await StudyList.get_by_name(session, new_list.name):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="This name is already taken."
         )
 
-    study_list = StudyList(name=name, user_id=current_user.id)
+    study_list = StudyList(name=new_list.name, user_id=current_user.id, img_url=new_list.img_url, description=new_list.description)
     session.add(study_list)
     await session.commit()
     await session.refresh(study_list)

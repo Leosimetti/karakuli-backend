@@ -41,10 +41,9 @@ def kanji():
                         "jlpt_level": data[5],
                         # "year_added": data[6],
                         "meaning": data[7],
-                        # "readings": data[8].strip(),
+                        "readings": data[8].strip(),
                         # "example": f"I like my {data[1]} - Я люблю сво(ю/й) {data[7]}"
                     }
-
                     results.append(word_entry)
             with open("kanji.pickle", "wb") as f:
                 pickle.dump(results, f)

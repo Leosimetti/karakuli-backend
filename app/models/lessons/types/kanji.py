@@ -35,6 +35,7 @@ class Kanji(Base, BaseType):
     joyo_level = Column(String)
     jlpt_level = Column(String)
     links = Column(JSON, nullable=True)
+    reading = Column(String, nullable=False)
 
     radicals = relationship(Radical, secondary=association_radicals)
     readings = relationship(Reading, secondary=association_readings)

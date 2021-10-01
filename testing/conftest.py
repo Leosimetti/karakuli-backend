@@ -106,7 +106,7 @@ async def get_current_user(access_token, ac: AsyncClient):
     return res
 
 
-async def create_list(name: str, main_user: bool, ac: AsyncClient):
+async def create_list(name: str, main_user: bool,  ac: AsyncClient, description=""):
     from testing.test_auth import PROPER_USER, PROPER_USER2, TestJWT
 
     if main_user:
@@ -121,7 +121,7 @@ async def create_list(name: str, main_user: bool, ac: AsyncClient):
     token = res.json()["access_token"]
 
     res = await ac.post(
-        LISTS_PATH, params={"name": name}, headers={"Authorization": f"Bearer {token}"}
+        LISTS_PATH, json={"name": name, "description": description}, headers={"Authorization": f"Bearer {token}"}
     )
     return token, res
 

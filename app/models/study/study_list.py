@@ -21,6 +21,7 @@ class StudyList(Base, BaseModel):
 
     name = Column(String(100), unique=True, nullable=False)
     description = Column(Text())
+    img_url = Column(String, default="https://lh3.googleusercontent.com/proxy/TuyWP_h4w3SW2Satf3Q_9ay7i1xI9emvLKwd2D9up6-noNFknZKVek13cNsPNF6hhPYJ0c7sZNU2lOjhYYln3doPa9NyqkTLlyP1Zti0Trs35SQlPgDQ1qdN")
 
     user = relationship("User", back_populates="created_study_lists")
     items = relationship(
