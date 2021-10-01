@@ -23,10 +23,10 @@ api = APIRouter(tags=["Review"], prefix="/reviews")
     },
 )
 async def review_item(
-    lesson_id: int,
-    review: ReviewSubmit,
-    current_user: User = Depends(get_current_user("reviews")),
-    session: AsyncSession = Depends(get_db_session),
+        lesson_id: int,
+        review: ReviewSubmit,
+        current_user: User = Depends(get_current_user("reviews")),
+        session: AsyncSession = Depends(get_db_session),
 ):
     rev: Review = await Review.get(
         session, current_user.id, lesson_id, review.review_type
@@ -69,15 +69,15 @@ async def review_item(
     },
 )
 async def get_reviews_for_lesson(
-    lesson_id: int,
-    current_user: User = Depends(get_current_user("reviews")),
-    session: AsyncSession = Depends(get_db_session),
+        lesson_id: int,
+        current_user: User = Depends(get_current_user("reviews")),
+        session: AsyncSession = Depends(get_db_session),
 ):
     reviews = []
     for (
-        r_type
+            r_type
     ) in (
-        ReviewType._member_map_
+            ReviewType._member_map_
     ):
         rev: Review = await Review.get(session, current_user.id, lesson_id, r_type)
 
@@ -105,9 +105,9 @@ async def get_reviews_for_lesson(
     responses={422: {"detail": "No lessons to add."}},
 )
 async def add_lesson_to_review(
-    current_user: User = Depends(get_current_user("reviews")),
-    session: AsyncSession = Depends(get_db_session),
-    lessons: List[int] = Query(None, alias="lesson_id"),
+        current_user: User = Depends(get_current_user("reviews")),
+        session: AsyncSession = Depends(get_db_session),
+        lessons: List[int] = Query(None, alias="lesson_id"),
 ):
     # Todo @todo mb optimize the query?
 
@@ -131,7 +131,7 @@ async def add_lesson_to_review(
 
         # Creating necessary review types for the current lesson
         for (
-            r_type
+                r_type
         ) in review_types:
             _, new_time = srs.correct_answer(
                 0, False
@@ -170,9 +170,9 @@ async def add_lesson_to_review(
     status_code=status.HTTP_200_OK,
 )
 async def list_due_user_reviews(
-    limit: Optional[int] = None,
-    session: AsyncSession = Depends(get_db_session),
-    current_user: User = Depends(get_current_user("reviews", "reviews.lesson")),
+        limit: Optional[int] = None,
+        session: AsyncSession = Depends(get_db_session),
+        current_user: User = Depends(get_current_user("reviews", "reviews.lesson")),
 ):
     # Todo @todo only give reviews that are from the current list???? Allow users to combine lists?
     # Todo @todo maybe somehow add the study list note????
@@ -183,7 +183,12 @@ async def list_due_user_reviews(
     # Todo @todo check of doing a db query is more efficient
     filter_func = lambda x: x.review_date <= now
     result = list(filter(filter_func, reviews))
-    result_with_content = [
-        await Lesson.get_content(session, x.lesson_id) for x in result
-    ]
+
+    result_with_content = []
+    for x in result:
+        tmp = (await Lesson.get_content(session, x.lesson_id)).__dict__
+        tmp["type"] = x.type
+
+        result_with_content.append(tmp)
+
     return result_with_content
